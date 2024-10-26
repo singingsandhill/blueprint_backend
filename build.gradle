@@ -32,7 +32,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools' //캐시 삭제, 개발 test 용이
 
     compileOnly 'org.projectlombok:lombok'
-    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     annotationProcessor 'org.projectlombok:lombok'
