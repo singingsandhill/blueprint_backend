@@ -1,12 +1,10 @@
-package com.chapter1.blueprint.service;
+package com.chapter1.blueprint.member.service;
 
-import com.chapter1.blueprint.domain.Member;
-import com.chapter1.blueprint.repository.MemberRepository;
+import com.chapter1.blueprint.member.domain.Member;
+import com.chapter1.blueprint.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
