@@ -1,4 +1,4 @@
-package com.chapter1.blueprint.domain;
+package com.chapter1.blueprint.member.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
