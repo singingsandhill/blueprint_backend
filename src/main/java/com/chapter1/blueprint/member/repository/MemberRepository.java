@@ -1,7 +1,7 @@
-package com.chapter1.blueprint.repository;
+package com.chapter1.blueprint.member.repository;
 
 
-import com.chapter1.blueprint.domain.Member;
+import com.chapter1.blueprint.member.domain.Member;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
