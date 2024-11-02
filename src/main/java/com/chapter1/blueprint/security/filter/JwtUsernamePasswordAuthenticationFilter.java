@@ -37,7 +37,7 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
         this.memberRepository = memberRepository;
         this.loginFailureHandler = loginFailureHandler;
         this.objectMapper = objectMapper;
-        setFilterProcessesUrl("/api/v1/member/login");
+        setFilterProcessesUrl("/member/login");
         setAuthenticationSuccessHandler(loginSuccessHandler);
         setAuthenticationFailureHandler(loginFailureHandler);
     }
@@ -47,18 +47,18 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
             throws AuthenticationException {
 
         LoginDTO login = LoginDTO.of(request, objectMapper);
-        Member member = memberRepository.findById(login.getMemberId())
+        Member member = memberRepository.findById(login.getId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
-        request.setAttribute("memberId", member.getId());
+        request.setAttribute("Id", member.getId());
 
-        int attempts = loginFailureHandler.getAttemptsCache().getOrDefault(login.getMemberId(), 0);
+        int attempts = loginFailureHandler.getAttemptsCache().getOrDefault(login.getId(), 0);
         if (attempts >= LoginFailureHandler.getMAX_ATTEMPTS()) {
             throw new BadCredentialsException("로그인 시도가 초과되었습니다.");
         }
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(login.getMemberId(), login.getPassword());
+                new UsernamePasswordAuthenticationToken(login.getId(), login.getPassword());
 
         return getAuthenticationManager().authenticate(authenticationToken);
     }

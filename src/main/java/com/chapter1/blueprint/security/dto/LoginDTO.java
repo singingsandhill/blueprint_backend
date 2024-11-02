@@ -17,7 +17,7 @@ import java.io.IOException;
 @Builder
 public class LoginDTO {
 
-    private String memberId;
+    private String id;
     private String password;
     private String accessToken;
     private String refreshToken;
@@ -26,7 +26,7 @@ public class LoginDTO {
         try {
             return objectMapper.readValue(request.getInputStream(), LoginDTO.class);
         } catch (IOException e) {
-            throw new BadCredentialsException("memberId 또는 password가 없습니다.");
+            throw new BadCredentialsException("id 또는 password가 없습니다.");
         }
     }
 }
