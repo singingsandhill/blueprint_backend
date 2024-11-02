@@ -1,24 +1,25 @@
 package com.chapter1.blueprint.security.filter;
 
 import com.chapter1.blueprint.security.util.JwtProcessor;
+import com.chapter1.blueprint.util.JsonResponseUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProcessor jwtProcessor;
-
+    private final JsonResponseUtil jsonResponseUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,7 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var authentication = jwtProcessor.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
+                jsonResponseUtil.sendErrorResponse(response, HttpStatus.UNAUTHORIZED,
+                        "Invalid or expired token in authorization header.",
+                        "The provided token is invalid or expired.");
                 return;
             }
         }

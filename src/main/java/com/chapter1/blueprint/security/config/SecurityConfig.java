@@ -61,9 +61,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of("http://localhost:3000"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));  // 허용할 메서드
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));  // 허용할 헤더
-        config.setAllowCredentials(true);  // 인증 정보를 포함한 요청 허용
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
+        config.setAllowCredentials(true);
 
         source.registerCorsConfiguration("/**", config);
         return source;
