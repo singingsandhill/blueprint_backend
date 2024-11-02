@@ -1,24 +1,22 @@
 package com.chapter1.blueprint.policy.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter @Setter
+@Table(name = "policy_detail",catalog = "policy")
 public class PolicyDetail {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
     private Long idx;
 
     @Column(name = "subject")
     private String subject;
 
-    @Column(name = "condition")
+    @Column(name = "`condition`")
     private String condition;
 
     @Column(name = "content")

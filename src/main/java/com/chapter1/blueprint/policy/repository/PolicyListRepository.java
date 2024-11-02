@@ -1,12 +1,10 @@
 package com.chapter1.blueprint.policy.repository;
 
-import jakarta.persistence.EntityManager;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.chapter1.blueprint.policy.domain.PolicyList;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
-public class PolicyListRepository {
-    // 생성자 injection
-    private final EntityManager em;
+public interface PolicyListRepository extends JpaRepository<PolicyList,String> {
+
 }
