@@ -1,21 +1,19 @@
 package com.chapter1.blueprint.member.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
 
-import java.sql.Timestamp;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter @Setter
 @Table(name = "member_info", catalog = "member")
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @GeneratedValue
+    @GeneratedValue
+
     @Column(name = "uid")
     private Long uid;
 
