@@ -36,8 +36,10 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
-        String id = request.getParameter("id");
-        Member member = memberRepository.findById(id)
+        String memberId = request.getParameter("memberId");
+        log.debug("Received memberId in onAuthenticationFailure: {}", memberId);
+
+        Member member = memberRepository.findByMemberId(memberId)
                 .orElse(null);
 
         if (exception instanceof BadCredentialsException && member == null) {
@@ -55,12 +57,12 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
                 member.setIsLoginLocked(false);
                 member.setLoginLockTime(null);
                 memberRepository.save(member);
-                attemptsCache.put(id, 0);
+                attemptsCache.put(memberId, 0);
             }
         }
 
-        int attempts = attemptsCache.getOrDefault(id, 0) + 1;
-        attemptsCache.put(id, attempts);
+        int attempts = attemptsCache.getOrDefault(memberId, 0) + 1;
+        attemptsCache.put(memberId, attempts);
 
         if (attempts >= MAX_ATTEMPTS) {
             member.setIsLoginLocked(true);

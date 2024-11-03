@@ -23,14 +23,14 @@ public class AuthController {
 
         String refreshToken = authDTO.getRefreshToken();
 
-        String id = jwtProcessor.getSubject(refreshToken);
+        String memberId = jwtProcessor.getSubject(refreshToken);
 
         if (jwtProcessor.validateRefreshToken(refreshToken)) {
-            Member member = memberRepository.findById(id)
+            Member member = memberRepository.findByMemberId(memberId)
                     .orElseThrow(() -> new RuntimeException("Invalid User"));
 
             String newAccessToken = jwtProcessor.generateAccessToken(
-                    member.getId(),
+                    member.getMemberId(),
                     member.getUid(),
                     member.getAuth(),
                     member.getMemberName(),
@@ -41,7 +41,7 @@ public class AuthController {
                     .accessToken(newAccessToken)
                     .refreshToken(refreshToken)
                     .uid(member.getUid())
-                    .id(member.getId())
+                    .memberId(member.getMemberId())
                     .memberName(member.getMemberName())
                     .email(member.getEmail())
                     .auth(member.getAuth())

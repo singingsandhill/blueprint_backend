@@ -47,18 +47,26 @@ public class JwtUsernamePasswordAuthenticationFilter extends UsernamePasswordAut
             throws AuthenticationException {
 
         LoginDTO login = LoginDTO.of(request, objectMapper);
-        Member member = memberRepository.findById(login.getId())
+        log.info("login: {}", login);
+        log.info("login getMemberId: {}", login.getMemberId());
+        Member member = memberRepository.findByMemberId(login.getMemberId())
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 아이디입니다."));
 
-        request.setAttribute("Id", member.getId());
+        request.setAttribute("memberId", member.getMemberId());
+        log.info("request getMemberId: {}", login.getMemberId());
 
-        int attempts = loginFailureHandler.getAttemptsCache().getOrDefault(login.getId(), 0);
+        int attempts = loginFailureHandler.getAttemptsCache().getOrDefault(login.getMemberId(), 0);
         if (attempts >= LoginFailureHandler.getMAX_ATTEMPTS()) {
             throw new BadCredentialsException("로그인 시도가 초과되었습니다.");
         }
 
+        log.info("Attempting authentication for ID: {}", login.getMemberId());
+        log.info("Password: {}", login.getPassword());
+
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(login.getId(), login.getPassword());
+                new UsernamePasswordAuthenticationToken(login.getMemberId(), login.getPassword());
+
+
 
         return getAuthenticationManager().authenticate(authenticationToken);
     }

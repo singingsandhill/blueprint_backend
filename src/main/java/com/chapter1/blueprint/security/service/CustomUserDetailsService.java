@@ -16,14 +16,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String memberId) throws UsernameNotFoundException {
 
-        Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + memberId));
 
-        return User.withUsername(member.getId())
+        return User.withUsername(member.getMemberId())
                 .password(member.getPassword())
-                .roles(member.getAuth())
+                .authorities(member.getAuth())
                 .build();
     }
 }

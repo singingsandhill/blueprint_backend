@@ -16,7 +16,7 @@ public class MemberService {
     // 회원 가입
     public String join(Member member) {
         memberRepository.save(member);
-        return member.getId();
+        return member.getMemberId();
     }
 
     // 마이페이지에서 추가 사항 입력 시 db 업데이트 (db변경 시 자동으로 update 해줌)
