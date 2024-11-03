@@ -1,4 +1,4 @@
-package com.chapter1.blueprint.global.DTO;
+package com.chapter1.blueprint.exception.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
