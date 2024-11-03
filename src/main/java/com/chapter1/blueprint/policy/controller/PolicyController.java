@@ -1,6 +1,6 @@
 package com.chapter1.blueprint.policy.controller;
 
-import com.chapter1.blueprint.global.DTO.ResponseDTO;
+import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.policy.service.PolicyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +16,6 @@ public class PolicyController {
     @GetMapping(value = "/policy/update/TK")
     public ResponseEntity<?> updatePolicyTK() {
         String result = policyService.updatePolicyTK();
-        return ResponseEntity.ok(new ResponseDTO(true,result));
+        return ResponseEntity.ok(new SuccessResponse(result));
     }
 }
