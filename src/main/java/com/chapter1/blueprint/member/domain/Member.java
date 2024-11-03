@@ -14,12 +14,11 @@ import java.time.LocalDateTime;
 public class Member {
     @Id
     @GeneratedValue
-
     @Column(name = "uid")
     private Long uid;
 
-    @Column(name = "id", length = 50, nullable = false)
-    private String id;
+    @Column(name = "member_id", length = 50, nullable = false)
+    private String memberId;
 
     @Column(length = 100, nullable = false)
     private String password;

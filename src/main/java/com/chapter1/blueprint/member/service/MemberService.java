@@ -15,7 +15,7 @@ public class MemberService {
     // 회원 가입
     public String join(Member member) {
         memberRepository.save(member);
-        return member.getId();
+        return member.getMemberId();
     }
 
 }
