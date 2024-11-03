@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Slf4j
@@ -59,13 +60,19 @@ public class JwtProcessor {
     }
 
     public String generateRefreshToken(String id) {
+        Timestamp expirationTimestamp = new Timestamp(new Date().getTime() + REFRESH_TOKEN_VALID_MILLISECONDS);
+
         return Jwts.builder()
                 .setSubject(id)
                 .claim("tokenType", "REFRESH")
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + REFRESH_TOKEN_VALID_MILLISECONDS))
+                .setExpiration(expirationTimestamp)
                 .signWith(key)
                 .compact();
+    }
+
+    public Timestamp getRefreshTokenExpiration() {
+        return new Timestamp(new Date().getTime() + REFRESH_TOKEN_VALID_MILLISECONDS);
     }
 
     private Claims parseTokenClaims(String token) {

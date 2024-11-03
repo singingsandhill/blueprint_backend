@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +38,11 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         String accessToken = jwtProcessor.generateAccessToken(memberId, uid, auth, memberName, email);
         String refreshToken = jwtProcessor.generateRefreshToken(memberId);
+        Timestamp expiration = jwtProcessor.getRefreshTokenExpiration();
+
+        member.setRefreshToken(refreshToken);
+        member.setExpiration(expiration);
+        memberRepository.save(member);
 
         return AuthDTO.builder()
                 .uid(uid)

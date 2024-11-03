@@ -37,6 +37,8 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
         String memberId = request.getParameter("memberId");
+        log.debug("Received memberId in onAuthenticationFailure: {}", memberId);
+
         Member member = memberRepository.findByMemberId(memberId)
                 .orElse(null);
 
