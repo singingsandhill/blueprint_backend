@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
+@Table(name = "member_info", catalog = "member")
 public class Member {
     @Id
     @GeneratedValue
@@ -21,7 +22,7 @@ public class Member {
     private String password;
 
     @Column(length = 100)
-    private String membername;
+    private String memberName;
 
     @Column(length = 100, nullable = false)
     private String email;
@@ -55,5 +56,23 @@ public class Member {
 
     @Column(name = "withdrawal_date")
     private LocalDateTime withdrawalDate;
+
+    @Column(name = "income")
+    private Double income;
+
+    @Column(name = "occupation")
+    private String occupation;
+
+    @Column(name = "residence")
+    private String residence;
+
+    @Column(name = "marital_status")
+    private Integer maritalStatus;
+
+    @Column(name = "has_children")
+    private Integer hasChildren;
+
+    @Column(name = "housing_type")
+    private String housingType;
 
 }
