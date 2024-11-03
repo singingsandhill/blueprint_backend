@@ -1,6 +1,7 @@
 package com.chapter1.blueprint.security.filter;
 
-import com.chapter1.blueprint.util.JsonResponseUtil;
+
+import com.chapter1.blueprint.exception.util.JsonResponseUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

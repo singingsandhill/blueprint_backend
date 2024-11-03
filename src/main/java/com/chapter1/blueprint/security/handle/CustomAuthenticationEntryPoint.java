@@ -1,6 +1,6 @@
 package com.chapter1.blueprint.security.handle;
 
-import com.chapter1.blueprint.util.JsonResponseUtil;
+import com.chapter1.blueprint.exception.util.JsonResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

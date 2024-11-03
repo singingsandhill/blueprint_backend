@@ -1,4 +1,4 @@
-package com.chapter1.blueprint.util;
+package com.chapter1.blueprint.exception.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,5 +1,6 @@
 package com.chapter1.blueprint.security.handle;
 
+import com.chapter1.blueprint.exception.util.JsonResponseUtil;
 import com.chapter1.blueprint.member.domain.Member;
 import com.chapter1.blueprint.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LoginFailureHandler implements AuthenticationFailureHandler {
 
     private final MemberRepository memberRepository;
-    private final com.chapter1.blueprint.util.JsonResponseUtil jsonResponseUtil;
+    private final JsonResponseUtil jsonResponseUtil;
 
     @Getter
     private static final int MAX_ATTEMPTS = 5;
