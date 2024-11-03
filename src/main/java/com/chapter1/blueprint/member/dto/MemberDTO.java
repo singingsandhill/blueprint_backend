@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberDTO {
     private Long uid;
-    private String id;
+    private String memberId;
     private String password;
     private String memberName;
     private String email;

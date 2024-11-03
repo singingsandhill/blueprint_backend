@@ -29,17 +29,17 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private AuthDTO makeAuth(Member member) {
         Long uid = member.getUid();
-        String id = member.getId();
+        String memberId = member.getMemberId();
         String memberName = member.getMemberName();
         String email = member.getEmail();
         String auth = member.getAuth();
 
-        String accessToken = jwtProcessor.generateAccessToken(id, uid, auth, memberName, email);
-        String refreshToken = jwtProcessor.generateRefreshToken(id);
+        String accessToken = jwtProcessor.generateAccessToken(memberId, uid, auth, memberName, email);
+        String refreshToken = jwtProcessor.generateRefreshToken(memberId);
 
         return AuthDTO.builder()
                 .uid(uid)
-                .id(id)
+                .memberId(memberId)
                 .memberName(memberName)
                 .email(email)
                 .accessToken(accessToken)
@@ -53,9 +53,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String id = userDetails.getUsername();
+        String memberId = userDetails.getUsername();
 
-        Optional<Member> memberOptional = memberRepository.findById(id);
+        Optional<Member> memberOptional = memberRepository.findByMemberId(memberId);
         if (memberOptional.isEmpty()) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "존재하지 않는 사용자입니다.");
             return;

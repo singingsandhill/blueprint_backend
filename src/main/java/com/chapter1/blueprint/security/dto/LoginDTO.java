@@ -17,7 +17,7 @@ import java.io.IOException;
 @Builder
 public class LoginDTO {
 
-    private String id;
+    private String memberId;
     private String password;
     private String accessToken;
     private String refreshToken;

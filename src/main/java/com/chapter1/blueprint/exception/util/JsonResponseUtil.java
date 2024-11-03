@@ -18,7 +18,6 @@ public class JsonResponseUtil {
 
     private final ObjectMapper objectMapper;
 
-    // 인증 실패 또는 접근 거부에 대한 JSON 응답을 생성하고 로그를 남김
     public void sendErrorResponse(HttpServletResponse response, HttpStatus status, String logMessage, String clientMessage) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");

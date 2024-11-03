@@ -1,9 +1,14 @@
 package com.chapter1.blueprint.security.config;
 
+import com.chapter1.blueprint.member.repository.MemberRepository;
 import com.chapter1.blueprint.security.filter.AuthenticationErrorFilter;
 import com.chapter1.blueprint.security.filter.JwtAuthenticationFilter;
+import com.chapter1.blueprint.security.filter.JwtUsernamePasswordAuthenticationFilter;
 import com.chapter1.blueprint.security.handle.CustomAccessDeniedHandler;
 import com.chapter1.blueprint.security.handle.CustomAuthenticationEntryPoint;
+import com.chapter1.blueprint.security.handle.LoginFailureHandler;
+import com.chapter1.blueprint.security.handle.LoginSuccessHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,16 +38,33 @@ public class SecurityConfig {
     private final AuthenticationErrorFilter authenticationErrorFilter;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+    private final LoginSuccessHandler loginSuccessHandler;
+    private final LoginFailureHandler loginFailureHandler;
+    private final ObjectMapper objectMapper;
+    private final MemberRepository memberRepository;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        AuthenticationManager authenticationManager = authenticationManager(authenticationConfiguration);
+
+        JwtUsernamePasswordAuthenticationFilter jwtUsernamePasswordAuthenticationFilter =
+                new JwtUsernamePasswordAuthenticationFilter(
+                        authenticationManager,
+                        loginSuccessHandler,
+                        loginFailureHandler,
+                        memberRepository,
+                        objectMapper
+                );
+
+        jwtUsernamePasswordAuthenticationFilter.setFilterProcessesUrl("/member/login");
+
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers("/", "/login", "/register").permitAll()
+                        .requestMatchers("/member/login", "member/register").permitAll()
                         .requestMatchers("/member/**").authenticated()
                         .anyRequest().permitAll()
                 )
@@ -51,11 +73,11 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
