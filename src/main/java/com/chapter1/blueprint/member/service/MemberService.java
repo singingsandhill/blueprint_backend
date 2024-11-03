@@ -21,9 +21,9 @@ public class MemberService {
 
     // 마이페이지에서 추가 사항 입력 시 db 업데이트 (db변경 시 자동으로 update 해줌)
     // 그래서 save 메소드 필요없음
-    public void updateMemberProfile(Long uid, InputProfileDTO inputProfileDTO) {
-        Member memberProfile = memberRepository.findById(uid)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + uid));
+    public void updateMemberProfile(String memberId, InputProfileDTO inputProfileDTO) {
+        Member memberProfile = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + memberId));
 
         memberProfile.setIncome(inputProfileDTO.getIncome());
         memberProfile.setOccupation(inputProfileDTO.getOccupation());
@@ -31,6 +31,8 @@ public class MemberService {
         memberProfile.setMaritalStatus(inputProfileDTO.getMaritalStatus());
         memberProfile.setHasChildren(inputProfileDTO.getHasChildren());
         memberProfile.setHousingType(inputProfileDTO.getHousingType());
+
+        memberRepository.save(memberProfile);
 
     }
 

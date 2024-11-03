@@ -1,11 +1,14 @@
 package com.chapter1.blueprint.member.controller;
 
+import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
 import com.chapter1.blueprint.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -15,10 +18,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/profile/{uid}")
-    public ResponseEntity<String> updateProfile(@PathVariable Long uid, @RequestBody InputProfileDTO inputProfileDTO) {
-        memberService.updateMemberProfile(uid, inputProfileDTO);
-        return ResponseEntity.ok("업데이트 성공");
+    @PostMapping("/profile/{memberId}")
+    public ResponseEntity<SuccessResponse> updateProfile(@PathVariable String memberId, @RequestBody InputProfileDTO inputProfileDTO) {
+        memberService.updateMemberProfile(memberId, inputProfileDTO);
+        return ResponseEntity.ok(new SuccessResponse("업데이트 성공"));
     }
 
     //@GetMapping(value = "/members/new")

@@ -43,11 +43,11 @@ public class JwtProcessor {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(String subject, Long uid, String auth, String memberName, String email) {
+    public String generateAccessToken(String memberId, Long uid, String auth, String memberName, String email) {
         String encryptedUid = AESUtil.encrypt(uid.toString(), encryptionSecret);
 
         return Jwts.builder()
-                .setSubject(subject)
+                .setSubject(memberId)
                 .claim("uid", encryptedUid)
                 .claim("role", auth)
                 .claim("memberName", memberName)
@@ -107,7 +107,7 @@ public class JwtProcessor {
     public boolean validateToken(String token) {
         try {
             Claims claims = parseTokenClaims(token);
-            return "access".equals(claims.get("tokenType")) && !claims.getExpiration().before(new Date());
+            return "ACCESS".equals(claims.get("tokenType")) && !claims.getExpiration().before(new Date());
         } catch (Exception e) {
             log.error("Invalid Access Token: {}", e.getMessage());
             return false;
@@ -117,7 +117,7 @@ public class JwtProcessor {
     public boolean validateRefreshToken(String refreshToken) {
         try {
             Claims claims = parseTokenClaims(refreshToken);
-            return "refresh".equals(claims.get("tokenType")) && !claims.getExpiration().before(new Date());
+            return "REFRESH".equals(claims.get("tokenType")) && !claims.getExpiration().before(new Date());
         } catch (Exception e) {
             log.error("Invalid Refresh Token: {}", e.getMessage());
             return false;
@@ -125,8 +125,8 @@ public class JwtProcessor {
     }
 
     public Authentication getAuthentication(String token) {
-        String id = getUid(token).toString();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(id);
+        String memberId = getSubject(token);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
