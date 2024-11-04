@@ -66,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/member/login", "/member/register").permitAll()
                         .requestMatchers("/member/**").authenticated()
+                        .requestMatchers("/policy/list/**", "/policy/detail/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception

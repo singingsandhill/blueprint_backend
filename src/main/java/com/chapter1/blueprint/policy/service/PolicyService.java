@@ -2,7 +2,7 @@ package com.chapter1.blueprint.policy.service;
 
 import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
-import com.chapter1.blueprint.policy.repository.PolicyDetailRepositpry;
+import com.chapter1.blueprint.policy.repository.PolicyDetailRepository;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +25,7 @@ import java.util.Date;
 @Slf4j
 public class PolicyService {
     private final PolicyListRepository policyListRepository;
-    private final PolicyDetailRepositpry policyDetailRepositpry;
+    private final PolicyDetailRepository policyDetailRepositpry;
 
     @Value("${tk.policy.api.url}")
     private String policyApiUrlTK;
