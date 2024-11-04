@@ -8,11 +8,12 @@ import com.chapter1.blueprint.policy.service.PolicyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,10 +30,10 @@ public class PolicyController {
         return ResponseEntity.ok(new SuccessResponse(result));
     }
 
-    @GetMapping("/list/{idx}")
-    public ResponseEntity<SuccessResponse> getPolicyList(@PathVariable Long idx) {
-        PolicyListDTO policyListDTO = policyDetailService.getPolicyList(idx);
-        return ResponseEntity.ok(new SuccessResponse(policyListDTO));
+    @GetMapping("/list")
+    public ResponseEntity<SuccessResponse> getPolicyList() {
+        List<PolicyListDTO> policyList = policyDetailService.getPolicyList();
+        return ResponseEntity.ok(new SuccessResponse(policyList));
     }
 
     @GetMapping("/detail/{idx}")

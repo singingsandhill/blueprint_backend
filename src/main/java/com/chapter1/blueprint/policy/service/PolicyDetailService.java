@@ -11,6 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.chapter1.blueprint.policy.repository.PolicyDetailRepository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -18,24 +22,24 @@ public class PolicyDetailService {
     private final PolicyDetailRepository policyDetailRepository;
     private final PolicyListRepository policyListRepository;
 
-    public PolicyListDTO getPolicyList(Long idx) {
-        PolicyList policyList = policyListRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("해당 idx의 PolicyList를 찾을 수 없습니다."));
+    public List<PolicyListDTO> getPolicyList() {
+        List<PolicyList> policyList = policyListRepository.findAll();
 
-        PolicyListDTO policyListDTO = new PolicyListDTO();
-        policyListDTO.setIdx(policyList.getIdx());
-        policyListDTO.setCity(policyList.getCity());
-        policyListDTO.setDistrict(policyList.getDistrict());
-        policyListDTO.setType(policyList.getType());
-        policyListDTO.setName(policyList.getName());
-        policyListDTO.setOfferInst(policyList.getOfferInst());
-        policyListDTO.setManageInst(policyList.getManageInst());
-        policyListDTO.setStartDate(policyList.getStartDate());
-        policyListDTO.setEndDate(policyList.getEndDate());
-        policyListDTO.setApplyStartDate(policyList.getApplyStartDate());
-        policyListDTO.setApplyEndDate(policyList.getApplyEndDate());
-
-        return policyListDTO;
+        return policyList.stream().map(policy -> {
+            PolicyListDTO policyListDTO = new PolicyListDTO();
+            policyListDTO.setIdx(policy.getIdx());
+            policyListDTO.setCity(policy.getCity());
+            policyListDTO.setDistrict(policy.getDistrict());
+            policyListDTO.setType(policy.getType());
+            policyListDTO.setName(policy.getName());
+            policyListDTO.setOfferInst(policy.getOfferInst());
+            policyListDTO.setManageInst(policy.getManageInst());
+            policyListDTO.setStartDate(policy.getStartDate());
+            policyListDTO.setEndDate(policy.getEndDate());
+            policyListDTO.setApplyStartDate(policy.getApplyStartDate());
+            policyListDTO.setApplyEndDate(policy.getApplyEndDate());
+            return policyListDTO;
+        }).collect(Collectors.toList());
     }
 
     public PolicyDetailDTO getPolicyDetail(Long idx) {
