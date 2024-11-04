@@ -59,6 +59,24 @@ public class Member {
     @Column(name = "withdrawal_date")
     private LocalDateTime withdrawalDate;
 
+    @Column(name = "income")
+    private Double income;
+
+    @Column(name = "occupation")
+    private String occupation;
+
+    @Column(name = "residence")
+    private String residence;
+
+    @Column(name = "marital_status")
+    private Integer maritalStatus;
+
+    @Column(name = "has_children")
+    private Integer hasChildren;
+
+    @Column(name = "housing_type")
+    private String housingType;
+
     @Column(name = "is_login_locked", nullable = false)
     private Boolean isLoginLocked = false;  // false = 잠금 해제, true = 잠금됨
 
