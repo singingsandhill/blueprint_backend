@@ -2,6 +2,7 @@ package com.chapter1.blueprint.policy.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.policy.domain.dto.PolicyDetailDTO;
+import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import com.chapter1.blueprint.policy.service.PolicyDetailService;
 import com.chapter1.blueprint.policy.service.PolicyService;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,12 @@ public class PolicyController {
     public ResponseEntity<?> updatePolicyTK() {
         String result = policyService.updatePolicyTK();
         return ResponseEntity.ok(new SuccessResponse(result));
+    }
+
+    @GetMapping("/list/{idx}")
+    public ResponseEntity<SuccessResponse> getPolicyList(@PathVariable Long idx) {
+        PolicyListDTO policyListDTO = policyDetailService.getPolicyList(idx);
+        return ResponseEntity.ok(new SuccessResponse(policyListDTO));
     }
 
     @GetMapping("/detail/{idx}")
