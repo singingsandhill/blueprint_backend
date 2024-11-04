@@ -59,11 +59,11 @@ public class JwtProcessor {
                 .compact();
     }
 
-    public String generateRefreshToken(String id) {
+    public String generateRefreshToken(String memberId) {
         Timestamp expirationTimestamp = new Timestamp(new Date().getTime() + REFRESH_TOKEN_VALID_MILLISECONDS);
 
         return Jwts.builder()
-                .setSubject(id)
+                .setSubject(memberId)
                 .claim("tokenType", "REFRESH")
                 .setIssuedAt(new Date())
                 .setExpiration(expirationTimestamp)

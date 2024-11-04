@@ -65,6 +65,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                         .requestMatchers("/member/login", "/member/register").permitAll()
+                        .requestMatchers("/member/checkMemberId/**", "/member/checkEmail/**").permitAll()
+                        .requestMatchers("/member/email/sendVerification", "/member/email/verifyEmailCode").permitAll()
                         .requestMatchers("/member/**").authenticated()
                         .anyRequest().permitAll()
                 )
