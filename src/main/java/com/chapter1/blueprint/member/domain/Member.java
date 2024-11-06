@@ -47,8 +47,8 @@ public class Member {
     @Column(name = "agreement_info", nullable = false)
     private Boolean agreementInfo;
 
-    @Column(name = "agreement_finance", nullable = false)
-    private Boolean agreementFinance;
+    @Column(name = "agreement_service", nullable = false)
+    private Boolean agreementService;
 
     @Column(length = 20)
     private String auth;

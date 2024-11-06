@@ -2,6 +2,7 @@ package com.chapter1.blueprint.member.service;
 
 import com.chapter1.blueprint.member.domain.Member;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
+import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
 import com.chapter1.blueprint.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class MemberService {
     // 그래서 save 메소드 필요없음
     public void updateMemberProfile(String memberId, InputProfileDTO inputProfileDTO) {
         Member memberProfile = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found with ID: " + memberId));
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with ID (InputProfile): " + memberId));
 
         memberProfile.setIncome(inputProfileDTO.getIncome());
         memberProfile.setOccupation(inputProfileDTO.getOccupation());
@@ -33,7 +34,23 @@ public class MemberService {
         memberProfile.setHousingType(inputProfileDTO.getHousingType());
 
         memberRepository.save(memberProfile);
+    }
 
+    public ProfileInfoDTO getInfoProfile(String memberId) {
+        Member memberProfileInfo = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with ID (ProfileInfo): " + memberId));
+
+       ProfileInfoDTO profileInfoDTO = new ProfileInfoDTO();
+        profileInfoDTO.setPassword(memberProfileInfo.getPassword());
+        profileInfoDTO.setEmail(memberProfileInfo.getEmail());
+        profileInfoDTO.setIncome(memberProfileInfo.getIncome());
+        profileInfoDTO.setOccupation(memberProfileInfo.getOccupation());
+        profileInfoDTO.setResidence(memberProfileInfo.getResidence());
+        profileInfoDTO.setMaritalStatus(memberProfileInfo.getMaritalStatus());
+        profileInfoDTO.setHasChildren(memberProfileInfo.getHasChildren());
+        profileInfoDTO.setHousingType(memberProfileInfo.getHousingType());
+
+        return profileInfoDTO;
     }
 
 }
