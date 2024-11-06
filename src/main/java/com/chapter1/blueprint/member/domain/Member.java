@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name = "member_info", catalog = "member")
 public class Member {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "uid")
     private Long uid;
 
@@ -45,10 +45,10 @@ public class Member {
     private String profile;
 
     @Column(name = "agreement_info", nullable = false)
-    private Boolean agreementInfo;
+    private Boolean agreementInfo = false;
 
     @Column(name = "agreement_service", nullable = false)
-    private Boolean agreementService;
+    private Boolean agreementService = false;
 
     @Column(length = 20)
     private String auth;
@@ -77,7 +77,7 @@ public class Member {
     @Column(name = "housing_type")
     private String housingType;
 
-    @Column(name = "is_login_locked", nullable = false)
+    @Column(name = "is_login_locked", nullable = true)
     private Boolean isLoginLocked = false;  // false = 잠금 해제, true = 잠금됨
 
     @Column(name = "login_lock_time")
@@ -86,6 +86,6 @@ public class Member {
     @Column(name = "refresh_token", length = 512)
     private String refreshToken;
 
-    @Column(name = "expiration", nullable = false)
+    @Column(name = "expiration", nullable = true)
     private Timestamp expiration;
 }

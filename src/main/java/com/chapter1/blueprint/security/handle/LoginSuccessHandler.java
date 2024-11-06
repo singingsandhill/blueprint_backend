@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
 
@@ -71,14 +73,16 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         Member member = memberOptional.get();
 
         AuthDTO result = makeAuth(member);
+
         jsonResponse.sendSuccess(response, result);
 
         resetLoginFailures(member);
+        member.setExpiration(jwtProcessor.getRefreshTokenExpiration());
+        memberRepository.save(member);
     }
 
     private void resetLoginFailures(Member member) {
         member.setIsLoginLocked(false);
         member.setLoginLockTime(null);
-        memberRepository.save(member);
     }
 }
