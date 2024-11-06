@@ -20,6 +20,7 @@ public class MemberDTO {
     private String auth;
     private Integer isLoginLocked;
     private Long loginLockTime;
-    private Boolean agreementFinance;
+    private Boolean agreementService;
     private Boolean agreementInfo;
+
 }

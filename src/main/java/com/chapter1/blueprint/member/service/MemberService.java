@@ -35,7 +35,7 @@ public class MemberService {
         member.setGender(memberDTO.getGender());
         member.setBirthYear(memberDTO.getBirthYear());
         member.setBirth(memberDTO.getBirth());
-        member.setAgreementService(memberDTO.getAgreementFinance());
+        member.setAgreementService(memberDTO.getAgreementService());
         member.setAgreementInfo(memberDTO.getAgreementInfo());
         member.setAuth("ROLE_MEMBER");
 
