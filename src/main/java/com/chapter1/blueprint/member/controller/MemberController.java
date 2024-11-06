@@ -7,6 +7,8 @@ import com.chapter1.blueprint.member.dto.MemberDTO;
 import com.chapter1.blueprint.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 
     @PostMapping("/register")
     public ResponseEntity<SuccessResponse> register(@RequestBody MemberDTO memberDTO) {
@@ -28,7 +31,9 @@ public class MemberController {
 
     @GetMapping("/checkMemberId")
     public ResponseEntity<?> checkMemberId(@RequestParam String memberId) {
-        boolean isAvailable = !memberService.checkMemberId(memberId);
+        boolean isAvailable = memberService.checkMemberId(memberId);
+        logger.info("Final response for memberId check: {}", isAvailable);
+
         return ResponseEntity.ok().body(isAvailable);
     }
 

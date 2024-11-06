@@ -56,8 +56,6 @@ public class SecurityConfig {
                         objectMapper
                 );
 
-        jwtUsernamePasswordAuthenticationFilter.setFilterProcessesUrl("/member/login");
-
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -76,7 +74,7 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, JwtUsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -89,8 +87,9 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:8080"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
+        config.setExposedHeaders(List.of("Authorization"));
         config.setAllowCredentials(true);
-
+        
         source.registerCorsConfiguration("/**", config);
         return source;
     }

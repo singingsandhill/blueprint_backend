@@ -1,13 +1,12 @@
 package com.chapter1.blueprint.member.service;
-
-import com.chapter1.blueprint.exception.codes.ErrorCode;
-import com.chapter1.blueprint.exception.codes.ErrorCodeException;
 import com.chapter1.blueprint.member.domain.Member;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
 import com.chapter1.blueprint.member.dto.MemberDTO;
 import com.chapter1.blueprint.member.repository.MemberRepository;
 import com.chapter1.blueprint.security.util.JwtProcessor;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +23,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProcessor jwtProcessor;
+    private static final Logger logger = LoggerFactory.getLogger(MemberService.class);
+
 
     public Map<String, String> register(MemberDTO memberDTO) {
         Member member = new Member();
@@ -56,11 +57,16 @@ public class MemberService {
     }
 
     public boolean checkMemberId(String memberId) {
-        return !memberRepository.existsByMemberId(memberId);
-    }
 
+        logger.info("Received memberId for check: {}", memberId);
+
+        boolean exists = memberRepository.existsByMemberId(memberId);
+
+        logger.info("Exists in DB: {}", exists);
+        return exists;
+    }
     public boolean checkEmailDuplicate(String email) {
-        return !memberRepository.existsByEmail(email);
+        return memberRepository.existsByEmail(email);
     }
 
     // 마이페이지에서 추가 사항 입력 시 db 업데이트 (db변경 시 자동으로 update 해줌)
