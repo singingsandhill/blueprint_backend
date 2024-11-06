@@ -5,6 +5,6 @@ import com.chapter1.blueprint.policy.domain.PolicyList;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PolicyListRepository extends JpaRepository<PolicyList,String> {
+public interface PolicyListRepository extends JpaRepository<PolicyList,Long> {
 
 }

@@ -62,6 +62,7 @@ dependencies {
     // JavaMail
     implementation 'org.springframework.boot:spring-boot-starter-mail' // JavaMail support in Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-web'   // Web support
+    implementation 'org.json:json:20230618'
 }
 
 tasks.named('test') {
