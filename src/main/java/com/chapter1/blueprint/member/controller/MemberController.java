@@ -1,5 +1,7 @@
 package com.chapter1.blueprint.member.controller;
 
+import com.chapter1.blueprint.exception.codes.ErrorCode;
+import com.chapter1.blueprint.exception.codes.ErrorCodeException;
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
 import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
@@ -12,6 +14,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import java.util.Map;
 
@@ -46,12 +52,24 @@ public class MemberController {
 
     @GetMapping("/profile/{memberId}")
     public ResponseEntity<SuccessResponse> getInfoProfile(@PathVariable String memberId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUserId = authentication.getName();
+
+        if (!authenticatedUserId.equals(memberId)) {
+            throw new ErrorCodeException(ErrorCode.AUTHORIZATION_DENIED);
+        }
         ProfileInfoDTO profileInfoDTO = memberService.getInfoProfile(memberId);
         return ResponseEntity.ok(new SuccessResponse(profileInfoDTO));
     }
 
     @PostMapping("/profile/{memberId}")
     public ResponseEntity<SuccessResponse> updateProfile(@PathVariable String memberId, @RequestBody InputProfileDTO inputProfileDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUserId = authentication.getName();
+
+        if (!authenticatedUserId.equals(memberId)) {
+            throw new ErrorCodeException(ErrorCode.AUTHORIZATION_DENIED);
+        }
         memberService.updateMemberProfile(memberId, inputProfileDTO);
         return ResponseEntity.ok(new SuccessResponse("업데이트 성공"));
     }
