@@ -1,9 +1,6 @@
 package com.chapter1.blueprint.subscription.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,37 +9,50 @@ import java.util.Date;
 
 @Entity
 @Getter @Setter
+@Table(name = "real_estate_price",catalog = "subscription")
 public class RealEstatePrice {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
     private Long idx;
 
-    @Column(name = "region")
-    private String region;
+    @Column(name = "rigeon")
+    private String rigeon;
 
-    @Column(name = "city")
-    private String city;
+    @Column(name = "ssg_cd")
+    private Integer ssgCd;
 
-    @Column(name = "district")
-    private String district;
+    @Column(name = "ssg_cd_nm")
+    private String ssgCdNm;
 
-    @Column(name = "detail")
-    private String detail;
+    @Column(name = "umd_nm")
+    private String umdNm;
 
-    @Column(name = "name")
-    private String name;
+    @Column(name = "jibun")
+    private String jibun;
 
-    @Column(name = "date")
-    private Date date;
 
-    @Column(name = "price")
-    private Long price;
+    @Column(name = "apt_dong")
+    private String aptDong;
 
-    @Column(name = "diff_price")
-    private Long diffPrice;
+    @Column(name = "apt_nm")
+    private String aptNm;
 
-    @Column(name = "diff_ratio")
-    private BigDecimal diffRatio;
+    @Column(name = "deal_day")
+    private Integer dealDay;
 
+    @Column(name = "deal_month")
+    private Integer dealMonth;
+
+    @Column(name = "deal_year")
+    private Integer dealYear;
+
+    @Column(name = "deal_date")
+    private Date dealDate;
+
+    @Column(name = "deal_amount")
+    private Long dealAmount;
+
+    @Column(name = "exclu_use_ar")
+    private BigDecimal excluUseAr;
 }

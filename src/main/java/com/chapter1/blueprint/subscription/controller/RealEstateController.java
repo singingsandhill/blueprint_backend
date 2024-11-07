@@ -18,7 +18,7 @@ public class RealEstateController {
 
     @GetMapping(value = "/get")
     public ResponseEntity<?> getRealEstatePrice() {
-        String result = "";
+        String result = realEstateService.getRealEstatePrice();
         return ResponseEntity.ok(new SuccessResponse(result));
     }
 }
