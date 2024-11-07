@@ -14,6 +14,7 @@ public enum ErrorCode {
 
     // 회원(Member)
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_001", "존재하지 않는 회원입니다."),
+    EMAIL_NOT_REGISTERED(HttpStatus.NOT_FOUND, "MEMBER_002", "등록되지 않은 이메일입니다."),
 
     // 서버(Server)
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_001", "서버 내부 에러가 발생했습니다."),
