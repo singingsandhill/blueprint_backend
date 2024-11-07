@@ -67,7 +67,6 @@ public class EmailService {
         mailSender.send(message);
     }
 
-
     private String generateVerificationCode() {
         return String.valueOf((int) (Math.random() * 900000) + 100000);
     }
@@ -88,5 +87,23 @@ public class EmailService {
         public LocalDateTime getExpirationTime() {
             return expirationTime;
         }
+    }
+
+    public void sendTemporaryPassword(String email, String temporaryPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("[BluePrint] 임시 비밀번호 발급 안내");
+        message.setText(
+                "안녕하세요, \n\n" +
+                        "사용자의 보안을 위해 빠른 시일 내에 비밀번호를 변경하시기를 권장드립니다.\n" +
+                        "발급된 임시 비밀번호: " + temporaryPassword + "\n\n" +
+                        "비밀번호 변경 안내: \n" +
+                        "1. 홈페이지 상단의 메뉴에서 본인의 이름을 클릭하여 마이페이지로 이동합니다.\n" +
+                        "2. '비밀번호 변경' 옵션을 선택하여 새 비밀번호를 설정합니다.\n\n" +
+                        "비밀번호 변경 절차에 대한 추가적인 안내가 필요하시면 언제든지 저희 고객 지원팀에 문의해 주시기 바랍니다. \n\n" +
+                        "항상 저희 서비스를 이용해 주셔서 진심으로 감사드립니다. \n\n" +
+                        "감사합니다."
+        );
+        mailSender.send(message);
     }
 }
