@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,5 +109,9 @@ public class SubscriptionService {
             return new String[]{matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4)};
         }
         return null; // 주소 형식이 맞지 않으면 null 반환
+    }
+
+    public List<SubscriptionList> getAllSubscription(){
+        return subscriptionListRepository.findAll();
     }
 }
