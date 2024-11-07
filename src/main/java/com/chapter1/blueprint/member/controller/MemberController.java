@@ -50,17 +50,17 @@ public class MemberController {
         return ResponseEntity.ok().body(isDuplicate);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<SuccessResponse> getInfoProfile() {
+    @GetMapping("/mypage")
+    public ResponseEntity<SuccessResponse> getInfoMyPage() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserId = authentication.getName();
 
         ProfileInfoDTO profileInfoDTO = memberService.getInfoProfile(authenticatedUserId);
         return ResponseEntity.ok(new SuccessResponse(profileInfoDTO));
     }
-    
-    @PostMapping("/profile")
-    public ResponseEntity<SuccessResponse> updateProfile(@RequestBody InputProfileDTO inputProfileDTO) {
+
+    @PostMapping("/mypage")
+    public ResponseEntity<SuccessResponse> updateMyPage(@RequestBody InputProfileDTO inputProfileDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserId = authentication.getName();
 
