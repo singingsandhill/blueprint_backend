@@ -50,31 +50,25 @@ public class MemberController {
         return ResponseEntity.ok().body(isDuplicate);
     }
 
-    @GetMapping("/profile/{memberId}")
-    public ResponseEntity<SuccessResponse> getInfoProfile(@PathVariable String memberId) {
+    @GetMapping("/profile")
+    public ResponseEntity<SuccessResponse> getInfoProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserId = authentication.getName();
 
-        if (!authenticatedUserId.equals(memberId)) {
-            throw new ErrorCodeException(ErrorCode.AUTHORIZATION_DENIED);
-        }
-        ProfileInfoDTO profileInfoDTO = memberService.getInfoProfile(memberId);
+        ProfileInfoDTO profileInfoDTO = memberService.getInfoProfile(authenticatedUserId);
         return ResponseEntity.ok(new SuccessResponse(profileInfoDTO));
     }
-
-    @PostMapping("/profile/{memberId}")
-    public ResponseEntity<SuccessResponse> updateProfile(@PathVariable String memberId, @RequestBody InputProfileDTO inputProfileDTO) {
+    
+    @PostMapping("/profile")
+    public ResponseEntity<SuccessResponse> updateProfile(@RequestBody InputProfileDTO inputProfileDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserId = authentication.getName();
 
-        if (!authenticatedUserId.equals(memberId)) {
-            throw new ErrorCodeException(ErrorCode.AUTHORIZATION_DENIED);
-        }
-        memberService.updateMemberProfile(memberId, inputProfileDTO);
+        memberService.updateMemberProfile(authenticatedUserId, inputProfileDTO);
         return ResponseEntity.ok(new SuccessResponse("업데이트 성공"));
     }
 
-     //@GetMapping(value = "/members/new")
+    //@GetMapping(value = "/members/new")
     //public String createForm() {
     //    return "members/createMemberForm";
     //}
