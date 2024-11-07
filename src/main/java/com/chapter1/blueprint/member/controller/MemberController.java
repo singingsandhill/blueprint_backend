@@ -3,6 +3,7 @@ package com.chapter1.blueprint.member.controller;
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
 import com.chapter1.blueprint.member.domain.dto.FindPasswordDTO;
+import com.chapter1.blueprint.member.domain.dto.PasswordDTO;
 import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
 import com.chapter1.blueprint.member.dto.MemberDTO;
 import com.chapter1.blueprint.member.service.MemberService;
@@ -78,6 +79,15 @@ public class MemberController {
 
         memberService.updateMemberProfile(authenticatedUserId, inputProfileDTO);
         return ResponseEntity.ok(new SuccessResponse("업데이트 성공"));
+    }
+
+    @PostMapping("/verification/password")
+    public ResponseEntity<SuccessResponse> verifyPassword(@RequestBody PasswordDTO passwordDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedUserId = authentication.getName();
+
+        boolean result = memberService.verifyPassword(authenticatedUserId, passwordDTO);
+        return ResponseEntity.ok(new SuccessResponse(result));
     }
 
     //@GetMapping(value = "/members/new")

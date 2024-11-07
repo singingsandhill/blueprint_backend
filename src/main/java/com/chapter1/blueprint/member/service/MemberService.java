@@ -3,11 +3,11 @@ import com.chapter1.blueprint.exception.codes.ErrorCode;
 import com.chapter1.blueprint.exception.codes.ErrorCodeException;
 import com.chapter1.blueprint.member.domain.Member;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
+import com.chapter1.blueprint.member.domain.dto.PasswordDTO;
 import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
 import com.chapter1.blueprint.member.dto.MemberDTO;
 import com.chapter1.blueprint.member.repository.MemberRepository;
 import com.chapter1.blueprint.security.util.JwtProcessor;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,7 +121,6 @@ public class MemberService {
     }
 
     // 마이페이지에서 추가 사항 입력 시 db 업데이트 (db변경 시 자동으로 update 해줌)
-    // 그래서 save 메소드 필요없음
     public void updateMemberProfile(String memberId, InputProfileDTO inputProfileDTO) {
         Member memberProfile = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found with ID (InputProfile): " + memberId));
@@ -151,6 +150,11 @@ public class MemberService {
         profileInfoDTO.setHousingType(memberProfileInfo.getHousingType());
 
         return profileInfoDTO;
+    }
+
+    public boolean verifyPassword(String memberId, PasswordDTO passwordDTO) {
+        String password = memberRepository.findPasswordByMemberId(memberId);
+        return passwordEncoder.matches(passwordDTO.getPassword(), password);
     }
 
 }
