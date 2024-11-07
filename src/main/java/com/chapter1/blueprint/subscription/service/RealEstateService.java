@@ -58,49 +58,34 @@ public class RealEstateService {
     public String getRealEstatePrice() {
         String callDate = "202406";
         // 특정 코드 26110의 Ssgcode를 하나만 가져와 테스트
-        Ssgcode ssgcd = ssgcodeRepository.findBySsgCd5("26110");
+        //Ssgcode ssgcd = ssgcodeRepository.findBySsgCd5("26110");
+        //if (ssgcd == null) {
+        //    log.error("Ssgcode 26110 not found");
+        //    return "Ssgcode 26110이 존재하지 않습니다";
+        //}
+        //try {
+            // 단일 요청
+        //    CompletableFuture<Void> future = CompletableFuture.runAsync(() -> processSsgcode(ssgcd, callDate), executorService);
+        //    future.join();
 
-        if (ssgcd == null) {
-            log.error("Ssgcode 26110 not found");
-            return "Ssgcode 26110이 존재하지 않습니다";
-        }
+        List<Ssgcode> ssgcds = ssgcodeRepository.findAll();
 
         try {
-            // 단일 요청
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> processSsgcode(ssgcd, callDate), executorService);
+            List<CompletableFuture<Void>> futures = ssgcds.stream()
+                    .map(ssgcd -> CompletableFuture.runAsync(() -> processSsgcode(ssgcd, callDate), executorService))
+                    .toList();
 
-            future.join();
-
-            executorService.shutdown();
-            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-                executorService.shutdownNow();
-            }
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        executorService.shutdown();
+        if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+            executorService.shutdownNow();
+        }
 
             return "API 불러오기 및 DB저장 성공";
         } catch (Exception e) {
             log.error("Error processing real estate data: ", e);
             return "API 처리 중 오류 발생: " + e.getMessage();
         }
-
-        //List<Ssgcode> ssgcds = ssgcodeRepository.findAll();
-
-        //try {
-        //    List<CompletableFuture<Void>> futures = ssgcds.stream()
-        //            .map(ssgcd -> CompletableFuture.runAsync(() -> processSsgcode(ssgcd, callDate), executorService))
-        //            .toList();
-
-        //    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-
-        //    executorService.shutdown();
-        //    if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-        //        executorService.shutdownNow();
-        //    }
-
-        //    return "API 불러오기 및 DB저장 성공";
-        //} catch (Exception e) {
-        //    log.error("Error processing real estate data: ", e);
-        //    return "API 처리 중 오류 발생: " + e.getMessage();
-        //}
     }
 
     private void processSsgcode(Ssgcode ssgcd, String callDate) {
