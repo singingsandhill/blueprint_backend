@@ -14,13 +14,13 @@ public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice
     @Modifying
     @Query(value = "UPDATE subscription.real_estate_price p " +
             "JOIN subscription.ssgcode s ON p.ssg_cd = s.ssg_cd_5 " +
-            "SET p.rigeon = s.ssg_cd_nm_rigeon, p.ssg_cd_nm = s.ssg_cd_nm_city" +
+            "SET p.region = s.ssg_cd_nm_region, p.ssg_cd_nm = s.ssg_cd_nm_city" +
             "WHERE p.ssg_cd_nm IS NULL", nativeQuery = true)
     int updateRealEstatePriceFromSsgcode();
 
     @Modifying
-    @Query(value = "INSERT INTO subscription.real_estate_price_summary (rigeon, sgg_cd_nm, umd_nm, deal_year, deal_month, deal_count, price_per_ar) " +
-            "SELECT rigeon, ssg_cd_nm, umd_nm, deal_year, deal_month, COUNT(*) AS deal_count, " +
+    @Query(value = "INSERT INTO subscription.real_estate_price_summary (region, sgg_cd_nm, umd_nm, deal_year, deal_month, deal_count, price_per_ar) " +
+            "SELECT region, ssg_cd_nm, umd_nm, deal_year, deal_month, COUNT(*) AS deal_count, " +
             "AVG(deal_amount / exclu_use_ar) AS price_per_ar " +
             "FROM subscription.real_estate_price " +
             "GROUP BY ssg_cd, umd_nm, deal_year, deal_month " +

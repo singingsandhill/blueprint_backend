@@ -16,8 +16,8 @@ public class RealEstatePrice {
     @Column(name = "idx")
     private Long idx;
 
-    @Column(name = "rigeon")
-    private String rigeon;
+    @Column(name = "region")
+    private String region;
 
     @Column(name = "ssg_cd")
     private Integer ssgCd;

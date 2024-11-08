@@ -12,7 +12,7 @@ public class SsgcodeDTO {
 
     private String ssgCd5;
 
-    private String ssgCdNmRigeon;
+    private String ssgCdNmRegion;
 
     private String ssgCdNmCity;
 }

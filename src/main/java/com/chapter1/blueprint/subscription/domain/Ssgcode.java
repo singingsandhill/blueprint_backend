@@ -18,8 +18,8 @@ public class Ssgcode {
     @Column(name = "ssg_cd_5")
     private String ssgCd5;
 
-    @Column(name = "ssg_cd_nm_rigeon")
-    private String ssgCdNmRigeon;
+    @Column(name = "ssg_cd_nm_region")
+    private String ssgCdNmRegion;
 
     @Column(name = "ssg_cd_nm_city")
     private String ssgCdNmCity;

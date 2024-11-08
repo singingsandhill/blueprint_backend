@@ -1,18 +1,21 @@
 package com.chapter1.blueprint.subscription.service;
 
+import com.chapter1.blueprint.exception.codes.ErrorCode;
+import com.chapter1.blueprint.exception.codes.ErrorCodeException;
+import com.chapter1.blueprint.subscription.domain.DTO.RealEstatePriceSummaryDTO;
 import com.chapter1.blueprint.subscription.domain.RealEstatePrice;
 import com.chapter1.blueprint.subscription.domain.Ssgcode;
 import com.chapter1.blueprint.subscription.repository.RealEstatePriceRepository;
+import com.chapter1.blueprint.subscription.repository.RealEstatePriceSummaryRepository;
 import com.chapter1.blueprint.subscription.repository.SsgcodeRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
-import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -37,6 +40,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -45,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 public class RealEstateService {
     private final RealEstatePriceRepository realEstatePriceRepository;
     private final SsgcodeRepository ssgcodeRepository;
+    private final RealEstatePriceSummaryRepository realEstatePriceSummaryRepository;
     private final ExecutorService executorService = Executors.newFixedThreadPool(20);
 
     @Value("${public.api.key}")
@@ -306,5 +311,45 @@ public class RealEstateService {
         return Date.from(LocalDate.of(year, month, day)
                 .atStartOfDay(ZoneId.systemDefault())
                 .toInstant());
+    }
+
+    public List<RealEstatePriceSummaryDTO> getRealEstateSummary(String region, String sggCdNm, String umdNm){
+        validateInput(region, sggCdNm, umdNm);
+        try {
+            List<Object[]> results = realEstatePriceSummaryRepository
+                    .findByRegionAndSggCdNmAndUmdNm(region, sggCdNm, umdNm);
+
+            if (results.isEmpty()) {
+                throw new ErrorCodeException(ErrorCode.REAL_ESTATE_NOT_FOUND);
+            }
+
+            return results.stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+
+        } catch (ErrorCodeException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("부동산 정보 조회 실패 - region: {}, sggCdNm: {}, umdNm: {}", region, sggCdNm, umdNm, e);
+            throw new ErrorCodeException(ErrorCode.REAL_ESTATE_SERVER_ERROR);
+        }
+    }
+
+    private RealEstatePriceSummaryDTO convertToDTO(Object[] result) {
+        return new RealEstatePriceSummaryDTO(
+                (String) result[0],     // region
+                (String) result[1],     // sggCdNm
+                (String) result[2],     // umdNm
+                ((Number) result[3]).intValue(),    // dealYear
+                ((Number) result[4]).intValue(),    // dealMonth
+                ((Number) result[5]).intValue(),    // dealCount
+                ((Number) result[6]).doubleValue()  // pricePerAr
+        );
+    }
+
+    private void validateInput(String region, String sggCdNm, String umdNm) {
+        if (StringUtils.isEmpty(region) || StringUtils.isEmpty(sggCdNm) || StringUtils.isEmpty(umdNm)) {
+            throw new ErrorCodeException(ErrorCode.INVALID_REGION_PARAMETER);
+        }
     }
 }

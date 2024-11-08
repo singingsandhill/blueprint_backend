@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class RealEstateDTO {
     private Long idx;
 
-    private String rigeon;
+    private String region;
 
     private Integer sggCd;
 
