@@ -56,17 +56,7 @@ public class RealEstateService {
     private final XmlMapper xmlMapper = new XmlMapper();
 
     public String getRealEstatePrice() {
-        String callDate = "202406";
-        // 특정 코드 26110의 Ssgcode를 하나만 가져와 테스트
-        //Ssgcode ssgcd = ssgcodeRepository.findBySsgCd5("26110");
-        //if (ssgcd == null) {
-        //    log.error("Ssgcode 26110 not found");
-        //    return "Ssgcode 26110이 존재하지 않습니다";
-        //}
-        //try {
-            // 단일 요청
-        //    CompletableFuture<Void> future = CompletableFuture.runAsync(() -> processSsgcode(ssgcd, callDate), executorService);
-        //    future.join();
+        String callDate = "202405";
 
         List<Ssgcode> ssgcds = ssgcodeRepository.findAll();
 
@@ -76,11 +66,12 @@ public class RealEstateService {
                     .toList();
 
             CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-        executorService.shutdown();
-        if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
-            executorService.shutdownNow();
-        }
-
+            executorService.shutdown();
+            if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
+            }
+            realEstatePriceRepository.updateRealEstatePriceFromSsgcode();
+            realEstatePriceRepository.insertSummary();
             return "API 불러오기 및 DB저장 성공";
         } catch (Exception e) {
             log.error("Error processing real estate data: ", e);
@@ -245,7 +236,7 @@ public class RealEstateService {
                     String dealAmount = getNodeValue(itemNode, "dealAmount");
                     if (dealAmount != null) {
                         dealAmount = dealAmount.replace(",", "");
-                        realEstatePrice.setDealAmount(Long.parseLong(dealAmount)*10000);
+                        realEstatePrice.setDealAmount(Long.parseLong(dealAmount) * 10000);
                     }
 
                     // dealDate 설정
@@ -296,6 +287,7 @@ public class RealEstateService {
         }
         return null;
     }
+
     private BigDecimal getNodeBigDecimalValue(Node parentNode, String tagName) {
         String value = getNodeValue(parentNode, tagName);
         if (value != null) {
