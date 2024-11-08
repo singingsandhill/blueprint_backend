@@ -157,4 +157,13 @@ public class MemberService {
         return passwordEncoder.matches(passwordDTO.getPassword(), password);
     }
 
+    public void updatePassword(String memberId, PasswordDTO passwordDTO) {
+        String encodedPassword = passwordEncoder.encode(passwordDTO.getPassword());
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with ID (ProfileInfo): " + memberId));
+
+        member.setPassword(encodedPassword);
+        memberRepository.save(member);
+    }
+
 }

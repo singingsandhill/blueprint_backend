@@ -66,28 +66,37 @@ public class MemberController {
     @GetMapping("/mypage")
     public ResponseEntity<SuccessResponse> getInfoMyPage() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUserId = authentication.getName();
+        String authenticatedMemberId = authentication.getName();
 
-        ProfileInfoDTO profileInfoDTO = memberService.getInfoProfile(authenticatedUserId);
+        ProfileInfoDTO profileInfoDTO = memberService.getInfoProfile(authenticatedMemberId);
         return ResponseEntity.ok(new SuccessResponse(profileInfoDTO));
     }
 
     @PostMapping("/mypage")
     public ResponseEntity<SuccessResponse> updateMyPage(@RequestBody InputProfileDTO inputProfileDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUserId = authentication.getName();
+        String authenticatedMemberId = authentication.getName();
 
-        memberService.updateMemberProfile(authenticatedUserId, inputProfileDTO);
+        memberService.updateMemberProfile(authenticatedMemberId, inputProfileDTO);
         return ResponseEntity.ok(new SuccessResponse("업데이트 성공"));
     }
 
     @PostMapping("/verification/password")
     public ResponseEntity<SuccessResponse> verifyPassword(@RequestBody PasswordDTO passwordDTO) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedUserId = authentication.getName();
+        String authenticatedMemberId = authentication.getName();
 
-        boolean result = memberService.verifyPassword(authenticatedUserId, passwordDTO);
+        boolean result = memberService.verifyPassword(authenticatedMemberId, passwordDTO);
         return ResponseEntity.ok(new SuccessResponse(result));
+    }
+
+    @PostMapping("/change/password")
+    public ResponseEntity<SuccessResponse> updatePassword(@RequestBody PasswordDTO passwordDTO) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedMemberId = authentication.getName();
+
+        memberService.updatePassword(authenticatedMemberId, passwordDTO);
+        return ResponseEntity.ok(new SuccessResponse("비밀번호 변경 성공"));
     }
 
     //@GetMapping(value = "/members/new")
