@@ -60,6 +60,6 @@ public class PolicyDetailService {
     }
 
     public List<PolicyList> getPolicyListByFiltering(FilterDTO filterDTO) {
-         return policyListRepository.findByDistrictAndType(filterDTO.getDistrict(), filterDTO.getType());
+         return policyListRepository.findByDistrictAndType(filterDTO.getCity(), filterDTO.getDistrict(), filterDTO.getType());
     }
 }
