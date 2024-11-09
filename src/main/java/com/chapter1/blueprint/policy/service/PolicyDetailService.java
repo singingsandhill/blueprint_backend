@@ -2,6 +2,7 @@ package com.chapter1.blueprint.policy.service;
 
 import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
+import com.chapter1.blueprint.policy.domain.dto.FilterDTO;
 import com.chapter1.blueprint.policy.domain.dto.PolicyDetailDTO;
 import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.chapter1.blueprint.policy.repository.PolicyDetailRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,5 +57,9 @@ public class PolicyDetailService {
         policyDetailDTO.setUrl(policyDetail.getUrl());
 
         return policyDetailDTO;
+    }
+
+    public List<PolicyList> getPolicyListByFiltering(FilterDTO filterDTO) {
+         return policyListRepository.findByDistrictAndType(filterDTO.getDistrict(), filterDTO.getType());
     }
 }

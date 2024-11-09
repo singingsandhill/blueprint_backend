@@ -67,7 +67,7 @@ public class SecurityConfig {
                         .requestMatchers("/member/find/memberId", "/member/find/password").permitAll()
                         .requestMatchers("/member/email/sendVerification", "/member/email/verifyEmailCode").permitAll()
                         .requestMatchers("/member/**").authenticated()
-                        .requestMatchers("/policy/list/**", "/policy/detail/**").permitAll()
+                        .requestMatchers("/policy/list/**", "/policy/detail/**", "policy/filter").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception
