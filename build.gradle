@@ -59,6 +59,11 @@ dependencies {
     // JSON 변환
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
+
+    // JavaMail
+    implementation 'org.springframework.boot:spring-boot-starter-mail' // JavaMail support in Spring Boot
+    implementation 'org.springframework.boot:spring-boot-starter-web'   // Web support
+
     implementation 'org.json:json:20230618'
 }
 

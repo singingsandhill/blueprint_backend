@@ -1,9 +1,7 @@
 package com.chapter1.blueprint.member.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.chapter1.blueprint.member.domain.Member;
+import lombok.*;
 
 @Data
 @Builder
@@ -22,4 +20,7 @@ public class MemberDTO {
     private String auth;
     private Integer isLoginLocked;
     private Long loginLockTime;
+    private Boolean agreementService;
+    private Boolean agreementInfo;
+
 }
