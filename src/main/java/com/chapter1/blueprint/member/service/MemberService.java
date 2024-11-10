@@ -144,7 +144,7 @@ public class MemberService {
         profileInfoDTO.setEmail(memberProfileInfo.getEmail());
         profileInfoDTO.setIncome(memberProfileInfo.getIncome());
         profileInfoDTO.setOccupation(memberProfileInfo.getOccupation());
-        profileInfoDTO.setResidence(memberProfileInfo.getRegion());
+        profileInfoDTO.setRegion(memberProfileInfo.getRegion());
         profileInfoDTO.setMaritalStatus(memberProfileInfo.getMaritalStatus());
         profileInfoDTO.setHasChildren(memberProfileInfo.getHasChildren());
         profileInfoDTO.setHousingType(memberProfileInfo.getHousingType());
