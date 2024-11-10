@@ -99,6 +99,7 @@ public class MemberController {
         return ResponseEntity.ok(new SuccessResponse("비밀번호 변경 성공"));
     }
 
+
     //@GetMapping(value = "/members/new")
     //public String createForm() {
     //    return "members/createMemberForm";
