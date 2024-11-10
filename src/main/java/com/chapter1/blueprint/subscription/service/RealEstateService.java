@@ -40,6 +40,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -61,12 +62,21 @@ public class RealEstateService {
     private final XmlMapper xmlMapper = new XmlMapper();
 
     public String getRealEstatePrice() {
-        String callDate = "202405";
+        String callDate = "202407";
 
         List<Ssgcode> ssgcds = ssgcodeRepository.findAll();
+        List<Ssgcode> distinctSsgcds = ssgcds.stream()
+                .collect(Collectors.toMap(
+                        Ssgcode::getSsgCd5, // 중복 기준 필드
+                        Function.identity(),
+                        (existing, replacement) -> existing // 중복 시 기존 값 유지
+                ))
+                .values()
+                .stream()
+                .collect(Collectors.toList());
 
         try {
-            List<CompletableFuture<Void>> futures = ssgcds.stream()
+            List<CompletableFuture<Void>> futures = distinctSsgcds.stream()
                     .map(ssgcd -> CompletableFuture.runAsync(() -> processSsgcode(ssgcd, callDate), executorService))
                     .toList();
 
@@ -350,6 +360,57 @@ public class RealEstateService {
     private void validateInput(String region, String sggCdNm, String umdNm) {
         if (StringUtils.isEmpty(region) || StringUtils.isEmpty(sggCdNm) || StringUtils.isEmpty(umdNm)) {
             throw new ErrorCodeException(ErrorCode.INVALID_REGION_PARAMETER);
+        }
+    }
+
+    public List<String> getAllRegions() {
+        try {
+            return realEstatePriceSummaryRepository.findDistinctRegions();
+        } catch (Exception e) {
+            log.error("지역 목록 조회 실패", e);
+            throw new ErrorCodeException(ErrorCode.REAL_ESTATE_SERVER_ERROR);
+        }
+    }
+
+    public List<String> getSggList(String region) {
+        try {
+            if (!StringUtils.hasText(region)) {
+                throw new ErrorCodeException(ErrorCode.INVALID_REGION_PARAMETER);
+            }
+
+            List<String> sggList = realEstatePriceSummaryRepository.findDistinctSggCdNmByRegion(region);
+
+            if (sggList.isEmpty()) {
+                throw new ErrorCodeException(ErrorCode.REAL_ESTATE_NOT_FOUND);
+            }
+
+            return sggList;
+        } catch (ErrorCodeException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("시군구 목록 조회 실패 - region: {}", region, e);
+            throw new ErrorCodeException(ErrorCode.REAL_ESTATE_SERVER_ERROR);
+        }
+    }
+
+    public List<String> getUmdList(String region, String sggCdNm) {
+        try {
+            if (!StringUtils.hasText(region) || !StringUtils.hasText(sggCdNm)) {
+                throw new ErrorCodeException(ErrorCode.INVALID_REGION_PARAMETER);
+            }
+
+            List<String> umdList = realEstatePriceSummaryRepository.findDistinctUmdNmByRegionAndSggCdNm(region, sggCdNm);
+
+            if (umdList.isEmpty()) {
+                throw new ErrorCodeException(ErrorCode.REAL_ESTATE_NOT_FOUND);
+            }
+
+            return umdList;
+        } catch (ErrorCodeException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("읍면동 목록 조회 실패 - region: {}, sggCdNm: {}", region, sggCdNm, e);
+            throw new ErrorCodeException(ErrorCode.REAL_ESTATE_SERVER_ERROR);
         }
     }
 }

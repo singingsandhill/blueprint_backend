@@ -23,4 +23,18 @@ public interface RealEstatePriceSummaryRepository extends JpaRepository<RealEsta
             @Param("region") String region,
             @Param("sggCdNm") String sggCdNm,
             @Param("umdNm") String umdNm);
+
+    @Query("SELECT DISTINCT s.region FROM RealEstatePriceSummary s ORDER BY s.region")
+    List<String> findDistinctRegions();
+
+    @Query("SELECT DISTINCT s.sggCdNm FROM RealEstatePriceSummary s WHERE s.region = :region ORDER BY s.sggCdNm")
+    List<String> findDistinctSggCdNmByRegion(@Param("region") String region);
+
+    @Query("SELECT DISTINCT s.umdNm FROM RealEstatePriceSummary s WHERE s.region = :region AND s.sggCdNm = :sggCdNm ORDER BY s.umdNm")
+    List<String> findDistinctUmdNmByRegionAndSggCdNm(
+            @Param("region") String region,
+            @Param("sggCdNm") String sggCdNm
+    );
+
+
 }

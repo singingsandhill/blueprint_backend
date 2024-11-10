@@ -14,7 +14,7 @@ public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice
     @Modifying
     @Query(value = "UPDATE subscription.real_estate_price p " +
             "JOIN subscription.ssgcode s ON p.ssg_cd = s.ssg_cd_5 " +
-            "SET p.region = s.ssg_cd_nm_region, p.ssg_cd_nm = s.ssg_cd_nm_city" +
+            "SET p.region = s.ssg_cd_nm_region, p.ssg_cd_nm = s.ssg_cd_nm_city " +
             "WHERE p.ssg_cd_nm IS NULL", nativeQuery = true)
     int updateRealEstatePriceFromSsgcode();
 

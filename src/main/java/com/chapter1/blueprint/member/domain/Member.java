@@ -65,8 +65,14 @@ public class Member {
     @Column(name = "occupation")
     private String occupation;
 
-    @Column(name = "residence")
-    private String residence;
+    @Column(name = "region")
+    private String region;
+
+    @Column(name = "district")
+    private String district;
+
+    @Column(name = "local")
+    private String local;
 
     @Column(name = "marital_status")
     private Integer maritalStatus;

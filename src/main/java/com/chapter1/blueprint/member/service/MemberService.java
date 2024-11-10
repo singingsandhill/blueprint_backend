@@ -27,7 +27,7 @@ public class MemberService {
 
         memberProfile.setIncome(inputProfileDTO.getIncome());
         memberProfile.setOccupation(inputProfileDTO.getOccupation());
-        memberProfile.setResidence(inputProfileDTO.getResidence());
+        memberProfile.setRegion(inputProfileDTO.getResidence());
         memberProfile.setMaritalStatus(inputProfileDTO.getMaritalStatus());
         memberProfile.setHasChildren(inputProfileDTO.getHasChildren());
         memberProfile.setHousingType(inputProfileDTO.getHousingType());
