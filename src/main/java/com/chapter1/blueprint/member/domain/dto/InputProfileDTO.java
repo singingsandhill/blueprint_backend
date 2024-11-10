@@ -8,7 +8,7 @@ import lombok.Setter;
 public class InputProfileDTO {
     private Double income;
     private String occupation;
-    private String residence;
+    private String region;
     private Integer maritalStatus;
     private Integer hasChildren;
     private String housingType;

@@ -14,9 +14,9 @@ public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice
     @Query("SELECT DISTINCT city FROM RealEstatePrice")
     List<String> getCityList();
 
-    @Query("SELECT DISTINCT district FROM RealEstatePrice WHERE city = :city")
+    @Query("SELECT DISTINCT district FROM RealEstatePrice WHERE city = :city ORDER BY district")
     List<String> getDistrict(@Param("city") String city);
 
-    @Query("SELECT DISTINCT local FROM RealEstatePrice WHERE city = :city AND district = :district")
+    @Query("SELECT DISTINCT local FROM RealEstatePrice WHERE city = :city AND district = :district ORDER BY local")
     List<String> getLocal(@Param("city") String city, @Param("district") String district);
 }
