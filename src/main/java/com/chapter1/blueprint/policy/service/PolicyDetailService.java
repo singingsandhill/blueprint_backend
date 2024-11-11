@@ -55,6 +55,7 @@ public class PolicyDetailService {
         policyDetailDTO.setEnquiry(policyDetail.getEnquiry());
         policyDetailDTO.setDocument(policyDetail.getDocument());
         policyDetailDTO.setUrl(policyDetail.getUrl());
+        policyDetailDTO.setWay(policyDetail.getWay());
 
         return policyDetailDTO;
     }
