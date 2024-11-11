@@ -9,6 +9,8 @@ public class InputProfileDTO {
     private Double income;
     private String occupation;
     private String region;
+    private String district;
+    private String local;
     private Integer maritalStatus;
     private Integer hasChildren;
     private String housingType;

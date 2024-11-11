@@ -128,6 +128,8 @@ public class MemberService {
         memberProfile.setIncome(inputProfileDTO.getIncome());
         memberProfile.setOccupation(inputProfileDTO.getOccupation());
         memberProfile.setRegion(inputProfileDTO.getRegion());
+        memberProfile.setDistrict(inputProfileDTO.getDistrict());
+        memberProfile.setLocal(inputProfileDTO.getLocal());
         memberProfile.setMaritalStatus(inputProfileDTO.getMaritalStatus());
         memberProfile.setHasChildren(inputProfileDTO.getHasChildren());
         memberProfile.setHousingType(inputProfileDTO.getHousingType());
@@ -145,6 +147,8 @@ public class MemberService {
         profileInfoDTO.setIncome(memberProfileInfo.getIncome());
         profileInfoDTO.setOccupation(memberProfileInfo.getOccupation());
         profileInfoDTO.setRegion(memberProfileInfo.getRegion());
+        profileInfoDTO.setDistrict(memberProfileInfo.getDistrict());
+        profileInfoDTO.setLocal(memberProfileInfo.getLocal());
         profileInfoDTO.setMaritalStatus(memberProfileInfo.getMaritalStatus());
         profileInfoDTO.setHasChildren(memberProfileInfo.getHasChildren());
         profileInfoDTO.setHousingType(memberProfileInfo.getHousingType());
