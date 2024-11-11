@@ -2,6 +2,7 @@ package com.chapter1.blueprint.policy.service;
 
 import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
+import com.chapter1.blueprint.policy.domain.dto.FilterDTO;
 import com.chapter1.blueprint.policy.domain.dto.PolicyDetailDTO;
 import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.chapter1.blueprint.policy.repository.PolicyDetailRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,25 +22,25 @@ public class PolicyDetailService {
     private final PolicyDetailRepository policyDetailRepository;
     private final PolicyListRepository policyListRepository;
 
-    public List<PolicyListDTO> getPolicyList() {
-        List<PolicyList> policyList = policyListRepository.findAll();
-
-        return policyList.stream().map(policy -> {
-            PolicyListDTO policyListDTO = new PolicyListDTO();
-            policyListDTO.setIdx(policy.getIdx());
-            policyListDTO.setCity(policy.getCity());
-            policyListDTO.setDistrict(policy.getDistrict());
-            policyListDTO.setType(policy.getType());
-            policyListDTO.setName(policy.getName());
-            policyListDTO.setOfferInst(policy.getOfferInst());
-            policyListDTO.setManageInst(policy.getManageInst());
-            policyListDTO.setStartDate(policy.getStartDate());
-            policyListDTO.setEndDate(policy.getEndDate());
-            policyListDTO.setApplyStartDate(policy.getApplyStartDate());
-            policyListDTO.setApplyEndDate(policy.getApplyEndDate());
-            return policyListDTO;
-        }).collect(Collectors.toList());
-    }
+//    public List<PolicyListDTO> getPolicyList() {
+//        List<PolicyList> policyList = policyListRepository.findAll();
+//
+//        return policyList.stream().map(policy -> {
+//            PolicyListDTO policyListDTO = new PolicyListDTO();
+//            policyListDTO.setIdx(policy.getIdx());
+//            policyListDTO.setCity(policy.getCity());
+//            policyListDTO.setDistrict(policy.getDistrict());
+//            policyListDTO.setType(policy.getType());
+//            policyListDTO.setName(policy.getName());
+//            policyListDTO.setOfferInst(policy.getOfferInst());
+//            policyListDTO.setManageInst(policy.getManageInst());
+//            policyListDTO.setStartDate(policy.getStartDate());
+//            policyListDTO.setEndDate(policy.getEndDate());
+//            policyListDTO.setApplyStartDate(policy.getApplyStartDate());
+//            policyListDTO.setApplyEndDate(policy.getApplyEndDate());
+//            return policyListDTO;
+//        }).collect(Collectors.toList());
+//    }
 
     public PolicyDetailDTO getPolicyDetail(Long idx) {
         PolicyDetail policyDetail = policyDetailRepository.findById(idx)
@@ -57,5 +57,9 @@ public class PolicyDetailService {
         policyDetailDTO.setUrl(policyDetail.getUrl());
 
         return policyDetailDTO;
+    }
+
+    public List<PolicyList> getPolicyListByFiltering(FilterDTO filterDTO) {
+         return policyListRepository.findByDistrictAndType(filterDTO.getCity(), filterDTO.getDistrict(), filterDTO.getType());
     }
 }
