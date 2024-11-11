@@ -29,11 +29,11 @@ public class PolicyController {
         return ResponseEntity.ok(new SuccessResponse(result));
     }
 
-//    @GetMapping("/list")
-//    public ResponseEntity<SuccessResponse> getPolicyList() {
-//        List<PolicyListDTO> policyList = policyDetailService.getPolicyList();
-//        return ResponseEntity.ok(new SuccessResponse(policyList));
-//    }
+    @GetMapping("/list")
+    public ResponseEntity<SuccessResponse> getPolicyList() {
+        List<PolicyListDTO> policyList = policyDetailService.getPolicyList();
+        return ResponseEntity.ok(new SuccessResponse(policyList));
+    }
 
     @GetMapping("/detail/{idx}")
     public ResponseEntity<SuccessResponse> getPolicyDetail(@PathVariable Long idx) {
