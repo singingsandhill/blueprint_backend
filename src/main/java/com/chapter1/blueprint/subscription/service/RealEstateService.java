@@ -238,7 +238,7 @@ public class RealEstateService {
                     RealEstatePrice realEstatePrice = new RealEstatePrice();
 
                     // 각 필드 값 추출
-                    realEstatePrice.setSsgCd(getNodeIntValue(itemNode, "sggCd"));
+                    realEstatePrice.setSsgCd(String.valueOf(getNodeIntValue(itemNode, "sggCd")));
                     realEstatePrice.setUmdNm(getNodeValue(itemNode, "umdNm"));
                     realEstatePrice.setJibun(getNodeValue(itemNode, "jibun"));
                     realEstatePrice.setAptDong(getNodeValue(itemNode, "aptDong"));

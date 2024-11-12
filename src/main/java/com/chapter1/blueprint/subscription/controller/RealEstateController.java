@@ -1,7 +1,6 @@
 package com.chapter1.blueprint.subscription.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
-import com.chapter1.blueprint.subscription.domain.DTO.RealEstateDTO;
 import com.chapter1.blueprint.subscription.domain.DTO.RealEstatePriceSummaryDTO;
 import com.chapter1.blueprint.subscription.service.RealEstateService;
 import lombok.RequiredArgsConstructor;

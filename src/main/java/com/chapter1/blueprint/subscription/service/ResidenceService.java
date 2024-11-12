@@ -1,6 +1,6 @@
 package com.chapter1.blueprint.subscription.service;
 
-import com.chapter1.blueprint.subscription.domain.dto.ResidenceDTO;
+import com.chapter1.blueprint.subscription.domain.DTO.ResidenceDTO;
 import com.chapter1.blueprint.subscription.repository.RealEstatePriceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

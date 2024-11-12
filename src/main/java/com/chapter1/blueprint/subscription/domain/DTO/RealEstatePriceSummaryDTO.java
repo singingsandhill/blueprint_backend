@@ -1,6 +1,5 @@
 package com.chapter1.blueprint.subscription.domain.DTO;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 @AllArgsConstructor
