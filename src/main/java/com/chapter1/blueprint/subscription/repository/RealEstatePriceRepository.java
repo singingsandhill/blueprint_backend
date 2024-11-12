@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice, Long> {
@@ -26,4 +29,14 @@ public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice
             "GROUP BY ssg_cd, umd_nm, deal_year, deal_month " +
             "ORDER BY ssg_cd, umd_nm, deal_month", nativeQuery = true)
     void insertSummary();
+
+    @Query("SELECT DISTINCT city FROM RealEstatePrice")
+    List<String> getCityList();
+
+    @Query("SELECT DISTINCT district FROM RealEstatePrice WHERE city = :city ORDER BY district")
+    List<String> getDistrict(@Param("city") String city);
+
+    @Query("SELECT DISTINCT local FROM RealEstatePrice WHERE city = :city AND district = :district ORDER BY local")
+    List<String> getLocal(@Param("city") String city, @Param("district") String district);
+
 }

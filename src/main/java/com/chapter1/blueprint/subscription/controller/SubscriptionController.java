@@ -2,13 +2,13 @@ package com.chapter1.blueprint.subscription.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.subscription.domain.SubscriptionList;
+import com.chapter1.blueprint.subscription.domain.dto.ResidenceDTO;
+import com.chapter1.blueprint.subscription.service.ResidenceService;
 import com.chapter1.blueprint.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +18,7 @@ import java.util.List;
 @RequestMapping("/subscription")
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
+    private final ResidenceService residenceService;
 
     @GetMapping(value = "/update")
     public ResponseEntity<?> updateSubscription() {
@@ -30,4 +31,23 @@ public class SubscriptionController {
         List<SubscriptionList> subscriptionLists = subscriptionService.getAllSubscription();
         return ResponseEntity.ok(new SuccessResponse(subscriptionLists));
     }
+
+    @GetMapping("/city")
+    public ResponseEntity<SuccessResponse> getCityList() {
+        List<String> cityList = residenceService.getCityList();
+        return ResponseEntity.ok(new SuccessResponse(cityList));
+    }
+
+    @PostMapping("/district")
+    public ResponseEntity<SuccessResponse> getDistrict(@RequestBody ResidenceDTO residenceDTO) {
+        List<String> districtList = residenceService.getDistrict(residenceDTO);
+        return ResponseEntity.ok(new SuccessResponse(districtList));
+    }
+
+    @PostMapping("/local")
+    public ResponseEntity<SuccessResponse> getLocal(@RequestBody ResidenceDTO residenceDTO) {
+        List<String> localList = residenceService.getLocal(residenceDTO);
+        return ResponseEntity.ok(new SuccessResponse(localList));
+    }
+
 }
