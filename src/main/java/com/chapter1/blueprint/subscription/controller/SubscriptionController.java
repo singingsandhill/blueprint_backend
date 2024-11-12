@@ -27,7 +27,7 @@ public class SubscriptionController {
     }
 
     @GetMapping(value = "/get")
-            public ResponseEntity<?> getSubscription() {
+    public ResponseEntity<?> getSubscription() {
         List<SubscriptionList> subscriptionLists = subscriptionService.getAllSubscription();
         return ResponseEntity.ok(new SuccessResponse(subscriptionLists));
     }
