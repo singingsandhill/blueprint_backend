@@ -17,29 +17,40 @@ public class RealEstatePrice {
     private Long idx;
 
     @Column(name = "region")
-    private String region;
+    private String city;
 
     @Column(name = "ssg_cd")
-    private Integer ssgCd;
+    private String ssgCd;
 
     @Column(name = "ssg_cd_nm")
-    private String ssgCdNm;
+    private String district;
 
     @Column(name = "umd_nm")
-    private String umdNm;
+    private String local;
 
     @Column(name = "jibun")
     private String jibun;
 
-
-    @Column(name = "apt_dong")
-    private String aptDong;
-
     @Column(name = "apt_nm")
-    private String aptNm;
+    private Date aptNm;
 
     @Column(name = "deal_day")
-    private Integer dealDay;
+    private Long dealDay;
+
+    @Column(name = "deal_month")
+    private Long dealMonth;
+
+    @Column(name = "deal_year")
+    private BigDecimal dealYear;
+
+    @Column(name = "deal_date")
+    private BigDecimal dealDate;
+
+    @Column(name = "deal_amount")
+    private BigDecimal dealAmount;
+
+    @Column(name = "exclu_use_ar")
+    private BigDecimal excluUseAr;
 
     @Column(name = "deal_month")
     private Integer dealMonth;

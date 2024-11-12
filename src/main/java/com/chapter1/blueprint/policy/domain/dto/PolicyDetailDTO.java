@@ -14,4 +14,5 @@ public class PolicyDetailDTO {
     private String enquiry;
     private String document;
     private String url;
+    private String way;
 }
