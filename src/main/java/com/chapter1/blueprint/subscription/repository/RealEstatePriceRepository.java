@@ -30,13 +30,13 @@ public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice
             "ORDER BY ssg_cd, umd_nm, deal_month", nativeQuery = true)
     void insertSummary();
 
-    @Query("SELECT DISTINCT city FROM RealEstatePrice")
+    @Query("SELECT DISTINCT region FROM RealEstatePrice")
     List<String> getCityList();
 
-    @Query("SELECT DISTINCT district FROM RealEstatePrice WHERE city = :city ORDER BY district")
+    @Query("SELECT DISTINCT ssgCdNm FROM RealEstatePrice WHERE region = :city ORDER BY ssgCdNm")
     List<String> getDistrict(@Param("city") String city);
 
-    @Query("SELECT DISTINCT local FROM RealEstatePrice WHERE city = :city AND district = :district ORDER BY local")
+    @Query("SELECT DISTINCT umdNm FROM RealEstatePrice WHERE region = :city AND ssgCdNm = :district ORDER BY umdNm")
     List<String> getLocal(@Param("city") String city, @Param("district") String district);
 
 }

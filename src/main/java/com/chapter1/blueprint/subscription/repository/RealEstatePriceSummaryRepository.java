@@ -1,12 +1,9 @@
 package com.chapter1.blueprint.subscription.repository;
 
-import com.chapter1.blueprint.subscription.domain.DTO.RealEstatePriceSummaryDTO;
 import com.chapter1.blueprint.subscription.domain.RealEstatePriceSummary;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
