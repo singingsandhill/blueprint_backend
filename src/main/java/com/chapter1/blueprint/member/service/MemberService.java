@@ -127,7 +127,7 @@ public class MemberService {
 
         memberProfile.setIncome(inputProfileDTO.getIncome());
         memberProfile.setOccupation(inputProfileDTO.getOccupation());
-        memberProfile.setRegion(inputProfileDTO.getResidence());
+        memberProfile.setRegion(inputProfileDTO.getRegion());
         memberProfile.setDistrict(inputProfileDTO.getDistrict());
         memberProfile.setLocal(inputProfileDTO.getLocal());
         memberProfile.setMaritalStatus(inputProfileDTO.getMaritalStatus());

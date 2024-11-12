@@ -1,4 +1,4 @@
-package com.chapter1.blueprint.subscription.domain.dto;
+package com.chapter1.blueprint.subscription.domain.DTO;
 
 import lombok.Getter;
 import lombok.Setter;

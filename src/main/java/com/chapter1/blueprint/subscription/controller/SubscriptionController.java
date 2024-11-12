@@ -2,7 +2,7 @@ package com.chapter1.blueprint.subscription.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.subscription.domain.SubscriptionList;
-import com.chapter1.blueprint.subscription.domain.dto.ResidenceDTO;
+import com.chapter1.blueprint.subscription.domain.DTO.ResidenceDTO;
 import com.chapter1.blueprint.subscription.service.ResidenceService;
 import com.chapter1.blueprint.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
