@@ -22,7 +22,7 @@ public enum ErrorCode {
     // Real Estamate Error
     REAL_ESTATE_NOT_FOUND(HttpStatus.NOT_FOUND, "ESTATE_001", "부동산 정보를 찾을 수 없습니다."),
     INVALID_REGION_PARAMETER(HttpStatus.BAD_REQUEST, "ESTATE_002", "잘못된 지역 정보가 입력되었습니다."),
-    REAL_ESTATE_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "ESTATE_003", "부동산 정보 조회 중 오류가 발생했습니다.");
+    REAL_ESTATE_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "ESTATE_003", "부동산 정보 조회 중 오류가 발생했습니다."),
 
     // 요청(Request 관련 에러
     BAD_REQUEST_ERROR(HttpStatus.BAD_REQUEST, "G001", "잘못된 요청입니다."),
