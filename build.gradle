@@ -25,48 +25,43 @@ repositories {
 }
 
 dependencies {
-    //
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-devtools' //캐시 삭제, 개발 test 용이
-
+    implementation 'org.springframework.boot:spring-boot-devtools'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
-
     annotationProcessor 'org.projectlombok:lombok'
-
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-    //JUnit4 추가
+    
     testImplementation("org.junit.vintage:junit-vintage-engine") {
         exclude group: "org.hamcrest", module: "hamcrest-core"
     }
-
-    // Spring Boot Starter Security
+    
     implementation 'org.springframework.boot:spring-boot-starter-security'
-
-    // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-    // javax.servlet
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // JSON 변환
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
-
-    // JavaMail
-    implementation 'org.springframework.boot:spring-boot-starter-mail' // JavaMail support in Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-web'   // Web support
-
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.json:json:20230618'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// jar 파일 비활성화
+jar {
+    enabled = false
+}
+
+// boot jar 파일 이름 설정
+bootJar {
+    archiveFileName = 'blueprint-server.jar'
 }
