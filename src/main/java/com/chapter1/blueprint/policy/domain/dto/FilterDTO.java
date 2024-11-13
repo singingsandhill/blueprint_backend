@@ -9,4 +9,7 @@ public class FilterDTO {
     private String city;
     private String district;
     private String type;
+    private Integer age;
+    private String job;
+    private String name;
 }
