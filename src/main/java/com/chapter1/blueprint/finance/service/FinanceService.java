@@ -278,4 +278,12 @@ public class FinanceService {
             return "API 데이터 처리 중 오류 발생: " + e.getMessage();
         }
     }
+
+    public SavingsList getSavingsFilter() {
+        return savingsListRepository.getSavingsFilter();
+    }
+
+    public LoanList getLoanFilter() {
+        return loanListRepository.getLoanFilter();
+    }
 }
