@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -285,5 +288,9 @@ public class FinanceService {
 
     public LoanList getLoanFilter() {
         return loanListRepository.getLoanFilter();
+    }
+
+    public Page<LoanList> getFilteredLoans(Pageable pageable, String mrtgTypeNm, String lendRateTypeNm) {
+        return loanListRepository.findLoansWithFilters(mrtgTypeNm, lendRateTypeNm, pageable);
     }
 }

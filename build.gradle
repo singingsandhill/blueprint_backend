@@ -53,18 +53,17 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // javax.servlet
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
     // JSON 변환
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.15.2'
 
     // JavaMail
     implementation 'org.springframework.boot:spring-boot-starter-mail' // JavaMail support in Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-web'   // Web support
 
     implementation 'org.json:json:20230618'
+
+    // Swagger 의존성 추가
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 }
 
 tasks.named('test') {
