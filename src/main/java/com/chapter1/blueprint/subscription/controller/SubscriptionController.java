@@ -7,6 +7,8 @@ import com.chapter1.blueprint.subscription.service.ResidenceService;
 import com.chapter1.blueprint.subscription.service.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,10 @@ public class SubscriptionController {
     }
 
     @GetMapping(value = "/get")
-    public ResponseEntity<?> getSubscription() {
-        List<SubscriptionList> subscriptionLists = subscriptionService.getAllSubscription();
+    public ResponseEntity<?> getSubscription(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<SubscriptionList> subscriptionLists = subscriptionService.getAllSubscription(PageRequest.of(page, size));
         return ResponseEntity.ok(new SuccessResponse(subscriptionLists));
     }
 

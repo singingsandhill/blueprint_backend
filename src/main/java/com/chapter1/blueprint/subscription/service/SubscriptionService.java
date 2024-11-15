@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -240,7 +242,7 @@ public class SubscriptionService {
         return null; // 주소 형식이 맞지 않으면 null 반환
     }
 
-    public List<SubscriptionList> getAllSubscription() {
-        return subscriptionListRepository.findAll();
+    public Page<SubscriptionList> getAllSubscription(Pageable pageable) {
+        return subscriptionListRepository.findAll(pageable);
     }
 }
