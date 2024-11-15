@@ -22,7 +22,7 @@ public class SubscriptionController {
 
     @GetMapping(value = "/update")
     public ResponseEntity<?> updateSubscription() {
-        String result = subscriptionService.updateSub();
+        String result = subscriptionService.updateSubAPT()+subscriptionService.updateSubAPT2()+subscriptionService.updateSubOther();
         return ResponseEntity.ok(new SuccessResponse(result));
     }
 
