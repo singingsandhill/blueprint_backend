@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.time.LocalDate;
 
 @Service
 @Transactional
@@ -180,4 +181,9 @@ public class MemberService {
     public List<PolicyAlarm> getNotificationsByUid(Long uid) {
         return policyAlarmRepository.findByUid(uid);
     }
+    public Integer calculateAge(Integer birthYear) {
+        Integer currentYear = LocalDate.now().getYear();
+        return currentYear - birthYear;
+    }
+
 }
