@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubscriptionListRepository extends JpaRepository<SubscriptionList, Long> {
 
+
 }
