@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -168,6 +169,11 @@ public class MemberService {
 
         member.setPassword(encodedPassword);
         memberRepository.save(member);
+    }
+
+    public Integer calculateAge(Integer birthYear) {
+        Integer currentYear = LocalDate.now().getYear();
+        return currentYear - birthYear;
     }
 
 }

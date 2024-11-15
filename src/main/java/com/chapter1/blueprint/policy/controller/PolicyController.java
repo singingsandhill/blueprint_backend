@@ -10,6 +10,8 @@ import com.chapter1.blueprint.policy.service.PolicyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,5 +47,14 @@ public class PolicyController {
     public ResponseEntity<SuccessResponse> getPolicyListByFiltering(@RequestBody FilterDTO filterDTO) {
         List<PolicyList> policyListByFiltering = policyDetailService.getPolicyListByFiltering(filterDTO);
         return ResponseEntity.ok(new SuccessResponse(policyListByFiltering));
+    }
+
+    @GetMapping("/recommendation")
+    public ResponseEntity<SuccessResponse> recommendPolicy() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String authenticatedMemberId = authentication.getName();
+
+        List<PolicyList> recommendedPolicy = policyDetailService.recommendPolicy(authenticatedMemberId);
+        return ResponseEntity.ok(new SuccessResponse(recommendedPolicy));
     }
 }
