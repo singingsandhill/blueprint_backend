@@ -5,7 +5,6 @@ import com.chapter1.blueprint.subscription.repository.RealEstatePriceRepository;
 import com.chapter1.blueprint.subscription.repository.SubscriptionListRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.persistence.Column;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +32,11 @@ public class SubscriptionService {
     @Value("${public.api.key}")
     private String apiKey;
 
-    @Value("${sub.api.url}")
-    private String subApiUrl;
+    @Value("${sub.apt.api.url}")
+    private String subAptApiUrl;
 
     public String updateSub() {
-        String requestUrl = subApiUrl +"?"+"serviceKey="+apiKey;
+        String requestUrl = subAptApiUrl +"?page=1&perPage=20&"+"serviceKey="+apiKey;
 
         try{
             URL url = new URL(requestUrl);
@@ -77,6 +76,7 @@ public class SubscriptionService {
                 }
                 subscriptionList.setName(item.path("HOUSE_NM").asText());
                 subscriptionList.setHouseManageNo(item.path("HOUSE_MANAGE_NO").asInt());
+                subscriptionList.setHouseDtlSecdNm(item.path("HOUSE_DTL_SECD_NM").asText());
                 subscriptionList.setRentSecd(item.path("RENT_SECD_NM").asText());
                 subscriptionList.setHouseDtlSecd(item.path("HOUSE_DTL_SECD_NM").asText());
                 subscriptionList.setRceptBgnde(parseDate(item.path("RCEPT_BGNDE").asText(),dateFormat));
