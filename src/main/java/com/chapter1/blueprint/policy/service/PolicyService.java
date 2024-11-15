@@ -2,6 +2,7 @@ package com.chapter1.blueprint.policy.service;
 
 import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
+import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import com.chapter1.blueprint.policy.repository.PolicyDetailRepository;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -18,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -104,5 +106,9 @@ public class PolicyService {
             log.warn("날짜 파싱 실패: {}", dateStr, e);
             return null;
         }
+    }
+
+    public List<PolicyListDTO> findPoliciesWithApproachingDeadline() {
+        return policyListRepository.findPoliciesWithApproachingDeadline();
     }
 }

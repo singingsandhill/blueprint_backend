@@ -2,11 +2,16 @@ package com.chapter1.blueprint.member.service;
 
 import com.chapter1.blueprint.exception.codes.ErrorCode;
 import com.chapter1.blueprint.exception.codes.ErrorCodeException;
+import com.chapter1.blueprint.member.controller.MemberController;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import java.sql.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 import java.time.LocalDateTime;
@@ -17,6 +22,7 @@ import java.util.Map;
 public class EmailService {
 
     private final JavaMailSender mailSender;
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
     private final Map<String, VerificationData> verificationCodes = new ConcurrentHashMap<>();
 
     private static final long CODE_EXPIRATION_MINUTES = 5;
@@ -106,4 +112,32 @@ public class EmailService {
         );
         mailSender.send(message);
     }
+
+    public void sendNotificationEmail(String to, String policyName, Date endDate, Long idx) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject("[BluePrint] Policy Deadline Reminder");
+
+        String policyDetailLink = "http://localhost:5173/policy/detail/" + idx;  // 정책 상세 페이지 링크
+
+        message.setText(
+                "안녕하세요,\n\n" +
+                        "BluePrint 서비스를 이용해주셔서 감사합니다!\n\n" +
+                        "알려드릴 사항: 정책 '" + policyName + "'의 신청 마감일이 3일 남았습니다.\n\n" +
+                        "종료일: " + endDate + "\n\n" +
+                        "자세한 정책 내용은 아래 링크를 통해 확인해 주세요:\n" +
+                        policyDetailLink + "\n\n" +
+                        "마감일을 놓치지 않도록 미리 준비해 주세요.\n\n" +
+                        "감사합니다.\n" +
+                        "BluePrint 팀 드림"
+        );
+
+        try {
+            mailSender.send(message);
+            logger.info("Email sent to: {}", to);
+        } catch (Exception e) {
+            logger.error("Failed to send email to: {}", to, e);
+        }
+    }
+
 }

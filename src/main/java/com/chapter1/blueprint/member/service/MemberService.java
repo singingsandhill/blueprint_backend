@@ -2,11 +2,14 @@ package com.chapter1.blueprint.member.service;
 import com.chapter1.blueprint.exception.codes.ErrorCode;
 import com.chapter1.blueprint.exception.codes.ErrorCodeException;
 import com.chapter1.blueprint.member.domain.Member;
+import com.chapter1.blueprint.member.domain.PolicyAlarm;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
 import com.chapter1.blueprint.member.domain.dto.PasswordDTO;
 import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
 import com.chapter1.blueprint.member.dto.MemberDTO;
 import com.chapter1.blueprint.member.repository.MemberRepository;
+import com.chapter1.blueprint.member.repository.PolicyAlarmRepository;
+import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import com.chapter1.blueprint.security.util.JwtProcessor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -16,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @Transactional
@@ -30,6 +30,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProcessor jwtProcessor;
     private final EmailService emailService;
+    private final PolicyAlarmRepository policyAlarmRepository;
     private static final Logger logger = LoggerFactory.getLogger(MemberService.class);
 
 
@@ -170,4 +171,13 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    public Long getUidByMemberId(String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with memberId: " + memberId));
+        return member.getUid();
+    }
+
+    public List<PolicyAlarm> getNotificationsByUid(Long uid) {
+        return policyAlarmRepository.findByUid(uid);
+    }
 }

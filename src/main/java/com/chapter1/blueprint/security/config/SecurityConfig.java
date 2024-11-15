@@ -66,7 +66,7 @@ public class SecurityConfig {
                         .requestMatchers("/member/checkMemberId/**", "/member/checkEmail/**").permitAll()
                         .requestMatchers("/member/find/memberId", "/member/find/password").permitAll()
                         .requestMatchers("/member/email/sendVerification", "/member/email/verifyEmailCode").permitAll()
-                        .requestMatchers("/member/**").authenticated()
+                        .requestMatchers("/member/**","/member/mypage").authenticated()
                         .requestMatchers("/finance/filter/**").authenticated()
                         .requestMatchers("/policy/list/**", "/policy/detail/**", "policy/filter").permitAll()
                         .requestMatchers("/subscription/city", "/subscription/district", "/subscription/local").permitAll()

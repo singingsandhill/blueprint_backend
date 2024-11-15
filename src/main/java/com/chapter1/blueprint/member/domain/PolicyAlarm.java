@@ -26,4 +26,10 @@ public class PolicyAlarm {
 
     @Column(name = "send_date")
     private Date sendDate;
+
+    @Column(name = "policy_idx")
+    private Long policyIdx;
+
+    @Column(name = "notification_enabled")
+    private Boolean notificationEnabled = false;
 }
