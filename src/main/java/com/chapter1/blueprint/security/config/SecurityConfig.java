@@ -70,6 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/finance/**").permitAll()
                         .requestMatchers("/policy/list/**", "/policy/detail/**", "policy/filter").permitAll()
                         .requestMatchers("/subscription/city", "/subscription/district", "/subscription/local").permitAll()
+                        .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**","/swagger-resources/**","/webjars/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception
