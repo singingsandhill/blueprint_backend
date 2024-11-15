@@ -1,5 +1,8 @@
 package com.chapter1.blueprint.policy.service;
 
+import com.chapter1.blueprint.member.domain.Member;
+import com.chapter1.blueprint.member.repository.MemberRepository;
+import com.chapter1.blueprint.member.service.MemberService;
 import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.domain.dto.FilterDTO;
@@ -21,6 +24,8 @@ import java.util.stream.Collectors;
 public class PolicyDetailService {
     private final PolicyDetailRepository policyDetailRepository;
     private final PolicyListRepository policyListRepository;
+    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public List<PolicyListDTO> getPolicyList() {
         List<PolicyList> policyList = policyListRepository.findAll();
@@ -62,5 +67,13 @@ public class PolicyDetailService {
 
     public List<PolicyList> getPolicyListByFiltering(FilterDTO filterDTO) {
          return policyListRepository.findByCityDistrictTypeAgeJob(filterDTO.getCity(), filterDTO.getDistrict(), filterDTO.getType(), filterDTO.getAge(), filterDTO.getJob(), filterDTO.getName());
+    }
+
+    public List<PolicyList> recommendPolicy(String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with ID (recommendPolicy): " + memberId));;
+
+        int age = memberService.calculateAge(member.getBirthYear());
+        return policyListRepository.findByCityDistrictAgeJob(member.getRegion(), member.getDistrict(), age, member.getOccupation());
     }
 }
