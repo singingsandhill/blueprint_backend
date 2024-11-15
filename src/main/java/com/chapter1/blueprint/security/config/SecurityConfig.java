@@ -70,6 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/finance/filter/**").authenticated()
                         .requestMatchers("/policy/recommendation").authenticated()
                         .requestMatchers("/policy/list/**", "/policy/detail/**", "/policy/filter").permitAll()
+                        .requestMatchers("/finance/**").permitAll()
                         .requestMatchers("/subscription/city", "/subscription/district", "/subscription/local").permitAll()
                         .anyRequest().permitAll()
                 )
