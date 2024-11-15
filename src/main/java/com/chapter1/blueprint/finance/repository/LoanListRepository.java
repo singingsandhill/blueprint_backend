@@ -17,7 +17,7 @@ public interface LoanListRepository extends JpaRepository<LoanList, Long> {
     LoanList getLoanFilter();
 
     // @Query("SELECT l FROM LoanList l WHERE (:filter1 IS NULL OR l.mrtg_type_nm = :filter1) AND (:filter2 IS NULL OR l.lend_rate_type_nm = :filter2)")
-    @Query("SELECT l FROM LoanList l WHERE (:mrtgTypeNm is null or l.mrtgTypeNm = :mrtgTypeNm) AND (:lendRateTypeNm is null or l.lendRateTypeNm = :lendRateTypeNm)")
+    @Query("SELECT l FROM LoanList l WHERE (:mrtgTypeNm is null or l.mrtgTypeNm like :mrtgTypeNm) AND (:lendRateTypeNm is null or l.lendRateTypeNm = :lendRateTypeNm)")
     Page<LoanList> findLoansWithFilters(@Param("mrtgTypeNm") String mrtgTypeNm, @Param("lendRateTypeNm") String lendRateTypeNm, Pageable pageable);
 
 }
