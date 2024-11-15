@@ -15,7 +15,7 @@ public interface SavingsListRepository extends JpaRepository<SavingsList, Long> 
     @Query(value = "SELECT * FROM finance.savings_list ORDER BY intr_rate2 DESC LIMIT 1", nativeQuery = true)
     SavingsList getSavingsFilter();
 
-    @Query("SELECT s FROM SavingsList s WHERE (:intrRateNm is null or s.intrRateNm like :intrRateNm) AND (:prdCategory is null or s.prdCategory = :prdCategory)")
+    @Query("SELECT s FROM SavingsList s WHERE (:intrRateNm is null or s.intrRateNm = :intrRateNm) AND (:prdCategory is null or s.prdCategory = :prdCategory)")
     Page<SavingsList> findSavingsWithFilters(@Param("intrRateNm") String intrRateNm, @Param("prdCategory") String prdCategory, Pageable pageable);
 
 }

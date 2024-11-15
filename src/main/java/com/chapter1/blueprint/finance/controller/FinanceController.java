@@ -114,8 +114,8 @@ public class FinanceController {
     public ResponseEntity<?> getSavings(
             @RequestParam int page,
             @RequestParam int size,
-            @RequestParam(required = false, defaultValue = "단리") String intrRateNm,
-            @RequestParam(required = false, defaultValue = "deposit") String prdCategory,
+            @RequestParam(required = false, defaultValue = "") String intrRateNm,
+            @RequestParam(required = false, defaultValue = "") String prdCategory,
             @RequestParam(required = false, defaultValue = "intrRate") String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String direction
     ) {
