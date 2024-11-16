@@ -53,4 +53,7 @@ public class LoanList {
 
     @Column(name = "prd_category")
     private String prdCategory;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }
