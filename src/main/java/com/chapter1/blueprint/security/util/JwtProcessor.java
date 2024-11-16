@@ -85,7 +85,20 @@ public class JwtProcessor {
 
     public Long getUid(String token) {
         String encryptedUid = parseTokenClaims(token).get("uid", String.class);
-        return Long.parseLong(AESUtil.decrypt(encryptedUid, encryptionSecret));
+        if (encryptedUid == null) {
+            log.error("UID not found in token");
+            throw new IllegalArgumentException("UID not found in token");
+        }
+
+        try {
+            log.debug("Encrypted UID: {}", encryptedUid);
+            String decryptedUid = AESUtil.decrypt(encryptedUid, encryptionSecret);
+            log.debug("Decrypted UID: {}", decryptedUid);
+            return Long.parseLong(decryptedUid);
+        } catch (Exception e) {
+            log.error("Failed to decrypt UID from token: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Invalid UID in token", e);
+        }
     }
 
     public String getAuth(String token) {

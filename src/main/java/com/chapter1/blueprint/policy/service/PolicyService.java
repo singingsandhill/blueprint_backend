@@ -1,5 +1,6 @@
 package com.chapter1.blueprint.policy.service;
 
+import com.chapter1.blueprint.member.repository.PolicyAlarmRepository;
 import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
@@ -28,6 +29,7 @@ import java.util.List;
 public class PolicyService {
     private final PolicyListRepository policyListRepository;
     private final PolicyDetailRepository policyDetailRepositpry;
+    private final PolicyAlarmRepository policyAlarmRepository;
 
     @Value("${tk.policy.api.url}")
     private String policyApiUrlTK;
@@ -111,4 +113,12 @@ public class PolicyService {
     public List<PolicyListDTO> findPoliciesWithApproachingDeadline() {
         return policyListRepository.findPoliciesWithApproachingDeadline();
     }
+
+    @Transactional
+    public void deletePolicy(Long policyIdx) {
+        policyListRepository.deleteById(policyIdx);
+
+        policyAlarmRepository.deleteByPolicyIdx(policyIdx);
+    }
+
 }

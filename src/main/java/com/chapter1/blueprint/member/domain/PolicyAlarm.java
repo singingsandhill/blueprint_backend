@@ -32,4 +32,7 @@ public class PolicyAlarm {
 
     @Column(name = "notification_enabled")
     private Boolean notificationEnabled = false;
+
+    @Column(name = "apply_end_date")
+    private Date applyEndDate;
 }
