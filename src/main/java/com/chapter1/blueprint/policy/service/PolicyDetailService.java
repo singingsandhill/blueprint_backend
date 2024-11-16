@@ -48,21 +48,7 @@ public class PolicyDetailService {
     }
 
     public PolicyDetailDTO getPolicyDetail(Long idx) {
-        PolicyDetail policyDetail = policyDetailRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("해당 idx의 PolicyDetail을 찾을 수 없습니다."));
-
-        PolicyDetailDTO policyDetailDTO = new PolicyDetailDTO();
-        policyDetailDTO.setIdx(policyDetail.getIdx());
-        policyDetailDTO.setSubject(policyDetail.getSubject());
-        policyDetailDTO.setCondition(policyDetail.getCondition());
-        policyDetailDTO.setContent(policyDetail.getContent());
-        policyDetailDTO.setScale(policyDetail.getScale());
-        policyDetailDTO.setEnquiry(policyDetail.getEnquiry());
-        policyDetailDTO.setDocument(policyDetail.getDocument());
-        policyDetailDTO.setUrl(policyDetail.getUrl());
-        policyDetailDTO.setWay(policyDetail.getWay());
-
-        return policyDetailDTO;
+        return policyDetailRepository.findPolicyDetailByIdx(idx);
     }
 
     public List<PolicyList> getPolicyListByFiltering(FilterDTO filterDTO) {
