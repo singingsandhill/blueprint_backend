@@ -107,4 +107,27 @@ public class FinanceController {
 
         return ResponseEntity.ok(new SuccessResponse(result));
     }
+
+    @Operation(summary = "저축 상품 목록 조회", description = "페이지네이션과 필터를 적용하여 저축 상품 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @GetMapping("/savings")
+    public ResponseEntity<?> getSavings(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false, defaultValue = "") String intrRateNm,
+            @RequestParam(required = false, defaultValue = "") String prdCategory,
+            @RequestParam(required = false, defaultValue = "intrRate") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String direction
+    ) {
+        // Sort 객체 생성
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // 서비스 호출
+        Page<SavingsList> result = financeService.getFilteredSavings(pageable,
+                intrRateNm.isEmpty() ? null : intrRateNm,
+                prdCategory.isEmpty() ? null : prdCategory);
+
+        return ResponseEntity.ok(new SuccessResponse(result));
+    }
 }
