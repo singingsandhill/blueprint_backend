@@ -62,12 +62,17 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers("/member/login", "/member/register").permitAll()
-                        .requestMatchers("/member/checkMemberId/**", "/member/checkEmail/**").permitAll()
-                        .requestMatchers("/member/find/memberId", "/member/find/password").permitAll()
-                        .requestMatchers("/member/email/sendVerification", "/member/email/verifyEmailCode").permitAll()
-                        .requestMatchers("/member/**","/member/mypage").authenticated()
-                        .requestMatchers("/member/notification/status").authenticated()
+                        .requestMatchers(
+                                "/member/login",
+                                "/member/register",
+                                "/member/checkMemberId/**",
+                                "/member/checkEmail/**",
+                                "/member/find/memberId",
+                                "/member/find/password",
+                                "/member/email/sendVerification",
+                                "/member/email/verifyEmailCode"
+                        ).permitAll()
+                        .requestMatchers("/member/**").authenticated()
                         .requestMatchers("/finance/filter/**").authenticated()
                         .requestMatchers("/policy/recommendation").authenticated()
                         .requestMatchers("/policy/list/**", "/policy/detail/**", "/policy/filter").permitAll()
@@ -80,8 +85,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, JwtUsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

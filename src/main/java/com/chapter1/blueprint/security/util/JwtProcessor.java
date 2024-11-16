@@ -140,6 +140,10 @@ public class JwtProcessor {
     public Authentication getAuthentication(String token) {
         String memberId = getSubject(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,  // principal
+                token,        // credentials - 여기를 null에서 token으로 변경
+                userDetails.getAuthorities()
+        );
     }
 }

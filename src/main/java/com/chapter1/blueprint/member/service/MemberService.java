@@ -1,4 +1,5 @@
 package com.chapter1.blueprint.member.service;
+
 import com.chapter1.blueprint.exception.codes.ErrorCode;
 import com.chapter1.blueprint.exception.codes.ErrorCodeException;
 import com.chapter1.blueprint.member.domain.Member;
@@ -13,6 +14,7 @@ import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
 import com.chapter1.blueprint.security.util.JwtProcessor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,7 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.time.LocalDate;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -42,21 +45,28 @@ public class MemberService {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication == null) {
-                logger.error("No authentication found in SecurityContextHolder");
+                log.error("No authentication found in SecurityContextHolder");
                 throw new IllegalArgumentException("No authentication found");
             }
 
             if (!(authentication.getCredentials() instanceof String)) {
-                logger.error("Authentication credentials are not a String. Credentials: {}", authentication.getCredentials());
+                log.error("Authentication credentials are not a String. Credentials: {}", authentication.getCredentials());
                 throw new IllegalArgumentException("Invalid authentication credentials");
             }
 
             String token = (String) authentication.getCredentials();
-            logger.debug("Token received for UID extraction: {}", token);
+            log.error("token completed: {}", token);
+
+            // Bearer 접두어 제거
+            if (token.startsWith("Bearer ")) {
+                token = token.substring(7);  // "Bearer " 이후의 실제 토큰 값만 추출
+            }
+
+            log.error("Token after removing Bearer prefix: {}", token);
 
             return jwtProcessor.getUid(token);
         } catch (Exception e) {
-            logger.error("Exception in getAuthenticatedUid: ", e);
+            log.error("Exception in getAuthenticatedUid: ", e);
             throw e;
         }
     }

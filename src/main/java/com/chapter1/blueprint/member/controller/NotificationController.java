@@ -9,6 +9,7 @@ import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
 import com.chapter1.blueprint.policy.service.PolicyRecommendationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member/notification")
@@ -34,13 +36,25 @@ public class NotificationController {
 
     @PutMapping("/status")
     public ResponseEntity<String> updateNotificationStatus(@RequestBody Map<String, Object> request) {
-        Long uid = memberService.getAuthenticatedUid();
-        logger.debug("Updating notification status for UID: {}", uid);
-        boolean notificationEnabled = (Boolean) request.get("notificationEnabled");
+        try {
+            Long uid = memberService.getAuthenticatedUid();
+            log.info("Step 1 - Retrieved UID: {}", uid); // UID 값 확인
 
-        notificationService.updateNotificationStatus(uid, notificationEnabled);
+            log.info("Step 2 - Request body: {}", request); // 요청 데이터 확인
+            boolean notificationEnabled = (Boolean) request.get("notificationEnabled");
 
-        return ResponseEntity.ok("Notification status updated successfully.");
+            log.info("Step 3 - About to call notificationService with uid: {} and enabled: {}",
+                    uid, notificationEnabled); // 서비스 호출 직전 확인
+
+            notificationService.updateNotificationStatus(uid, notificationEnabled);
+
+            log.info("Step 4 - Successfully updated notification status"); // 성공 확인
+
+            return ResponseEntity.ok("Notification status updated successfully.");
+        } catch (Exception e) {
+            log.error("Failed to update notification status", e);
+            throw e;
+        }
     }
 
     @PutMapping("/{policyIdx}")
