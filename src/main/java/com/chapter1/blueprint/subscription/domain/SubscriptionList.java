@@ -39,9 +39,6 @@ public class SubscriptionList {
     @Column(name = "rent_secd")
     private String rentSecd;
 
-    @Column(name = "house_dtl_secd_nm")
-    private String houseDtlSecdNm;
-
     @Column(name = "house_dtl_secd")
     private String houseDtlSecd;
 
@@ -53,5 +50,4 @@ public class SubscriptionList {
 
     @Column(name = "pblanc_url")
     private String pblancUrl;
-
 }
