@@ -70,7 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/finance/filter/**").authenticated()
                         .requestMatchers("/policy/recommendation").authenticated()
                         .requestMatchers("/policy/list/**", "/policy/detail/**", "/policy/filter", "/policy/update/TK").permitAll()
-                        .requestMatchers("/finance/**").permitAll()
+                        .requestMatchers("/finance/**", "/finance/filter/**").permitAll()
                         .requestMatchers("/subscription/city", "/subscription/district", "/subscription/local", "/subscription/update").permitAll()
                         .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**","/swagger-resources/**","/webjars/**").permitAll()
                         .anyRequest().permitAll()

@@ -36,6 +36,12 @@ public class SubscriptionController {
         return ResponseEntity.ok(new SuccessResponse(subscriptionLists));
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAllSubscriptions() {
+        List<SubscriptionList> subscriptionLists = subscriptionService.getAllSubscriptions();
+        return ResponseEntity.ok(new SuccessResponse(subscriptionLists));
+    }
+
     @GetMapping("/city")
     public ResponseEntity<SuccessResponse> getCityList() {
         List<String> cityList = residenceService.getCityList();

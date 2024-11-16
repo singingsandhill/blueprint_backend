@@ -245,4 +245,9 @@ public class SubscriptionService {
     public Page<SubscriptionList> getAllSubscription(Pageable pageable) {
         return subscriptionListRepository.findAll(pageable);
     }
+
+    public List<SubscriptionList> getAllSubscriptions() {
+        return subscriptionListRepository.findAll();
+    }
+
 }
