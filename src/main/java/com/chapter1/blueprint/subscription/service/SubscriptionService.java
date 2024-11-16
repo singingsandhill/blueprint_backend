@@ -1,5 +1,7 @@
 package com.chapter1.blueprint.subscription.service;
 
+import com.chapter1.blueprint.member.domain.Member;
+import com.chapter1.blueprint.member.repository.MemberRepository;
 import com.chapter1.blueprint.subscription.domain.SubscriptionList;
 import com.chapter1.blueprint.subscription.repository.RealEstatePriceRepository;
 import com.chapter1.blueprint.subscription.repository.SubscriptionListRepository;
@@ -30,6 +32,7 @@ import java.util.regex.Pattern;
 public class SubscriptionService {
     private final RealEstatePriceRepository realEstatePriceRepository;
     private final SubscriptionListRepository subscriptionListRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${public.api.key}")
     private String apiKey;
@@ -250,4 +253,10 @@ public class SubscriptionService {
         return subscriptionListRepository.findAll();
     }
 
+    public List<SubscriptionList> recommendSubscription(String memberId) {
+        Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with ID (recommendSubscription): " + memberId));
+
+        return subscriptionListRepository.findByRegionAndCityAndDistrictContaining(member.getRegion(), member.getDistrict(), member.getLocal());
+    }
 }
