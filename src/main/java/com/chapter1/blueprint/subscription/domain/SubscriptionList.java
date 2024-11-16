@@ -50,5 +50,4 @@ public class SubscriptionList {
 
     @Column(name = "pblanc_url")
     private String pblancUrl;
-
 }

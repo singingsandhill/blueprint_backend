@@ -249,6 +249,10 @@ public class SubscriptionService {
         return subscriptionListRepository.findAll(pageable);
     }
 
+    public List<SubscriptionList> getAllSubscriptions() {
+        return subscriptionListRepository.findAll();
+    }
+
     public List<SubscriptionList> recommendSubscription(String memberId) {
         Member member = memberRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found with ID (recommendSubscription): " + memberId));
