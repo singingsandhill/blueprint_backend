@@ -36,4 +36,7 @@ public class PolicyAlarm {
 
     @Column(name = "apply_end_date")
     private Date applyEndDate;
+
+    @Column(name = "is_read")
+    private Boolean isRead = false;
 }

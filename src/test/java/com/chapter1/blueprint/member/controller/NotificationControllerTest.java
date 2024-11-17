@@ -52,7 +52,8 @@ class NotificationControllerTest {
         Map<String, Object> request = new HashMap<>();
         request.put("notificationEnabled", true);
 
-        ResponseEntity<String> response = notificationController.updateNotificationStatus(request);
+        ResponseEntity<SuccessResponse> response = notificationController.updateNotificationStatus(request);
+
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Notification status updated successfully.", response.getBody());
@@ -68,7 +69,7 @@ class NotificationControllerTest {
         Map<String, Object> request = new HashMap<>();
         request.put("notificationEnabled", false);
 
-        ResponseEntity<String> response = notificationController.updateNotificationStatus(request);
+        ResponseEntity<SuccessResponse> response = notificationController.updateNotificationStatus(request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Notification status updated successfully.", response.getBody());
@@ -85,12 +86,12 @@ class NotificationControllerTest {
         Map<String, Object> request = new HashMap<>();
         request.put("notificationEnabled", true);
         request.put("applyEndDate", new Date());
-
-        ResponseEntity<String> response = notificationController.updateNotificationSettings(policyIdx, request);
+      
+        ResponseEntity<SuccessResponse> response = notificationController.updateNotificationSettings(policyIdx, request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Notification settings updated successfully.", response.getBody());
-        verify(notificationService, times(1)).saveOrUpdateNotification(mockUid, policyIdx, true, (Date) request.get("applyEndDate"));
+        verify(notificationService, times(1)).saveOrUpdateNotification(mockUid, policyIdx, true);
     }
 
     @Test
@@ -164,10 +165,10 @@ class NotificationControllerTest {
         when(policyListRepository.findById(1L)).thenReturn(Optional.of(mockPolicy));
         when(policyListRepository.findById(2L)).thenReturn(Optional.of(mockPolicy));
 
-        ResponseEntity<Map<String, Object>> response = notificationController.getNotificationDashboard();
+        ResponseEntity<SuccessResponse> response = notificationController.getNotificationDashboard();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        Map<String, Object> dashboard = response.getBody();
+        Map<String, Object> dashboard = (Map<String, Object>) response.getBody();
 
         System.out.println("Dashboard: " + dashboard);
 

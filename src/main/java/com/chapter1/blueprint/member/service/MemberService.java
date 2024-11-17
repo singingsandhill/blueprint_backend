@@ -9,9 +9,7 @@ import com.chapter1.blueprint.member.domain.dto.PasswordDTO;
 import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
 import com.chapter1.blueprint.member.dto.MemberDTO;
 import com.chapter1.blueprint.member.repository.MemberRepository;
-import com.chapter1.blueprint.member.repository.PolicyAlarmRepository;
-import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
-import com.chapter1.blueprint.policy.repository.PolicyListRepository;
+
 import com.chapter1.blueprint.security.util.JwtProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,15 +53,10 @@ public class MemberService {
             }
 
             String token = (String) authentication.getCredentials();
-            log.error("token completed: {}", token);
 
-            // Bearer 접두어 제거
             if (token.startsWith("Bearer ")) {
-                token = token.substring(7);  // "Bearer " 이후의 실제 토큰 값만 추출
+                token = token.substring(7);
             }
-
-            log.error("Token after removing Bearer prefix: {}", token);
-
             return jwtProcessor.getUid(token);
         } catch (Exception e) {
             log.error("Exception in getAuthenticatedUid: ", e);
