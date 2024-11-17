@@ -31,6 +31,17 @@ public class NotificationService {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationService.class);
 
+    @Transactional(readOnly = true)
+    public boolean getNotificationStatus(Long uid) {
+        logger.info("Fetching notification status for UID: {}", uid);
+        Member member = memberRepository.findById(uid)
+                .orElseThrow(() -> new ErrorCodeException(ErrorCode.MEMBER_NOT_FOUND));
+
+        logger.info("Notification status for UID {}: {}", uid, member.getNotificationStatus());
+        return member.getNotificationStatus(); // DB에 저장된 notificationStatus 반환
+    }
+
+
     @Transactional
     public void updateNotificationStatus(Long uid, boolean enabled) {
         logger.info("Updating notification status for UID: {}", uid);

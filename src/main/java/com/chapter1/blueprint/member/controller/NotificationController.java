@@ -48,10 +48,13 @@ public class NotificationController {
 
         notificationService.updateNotificationStatus(uid, notificationEnabled);
 
-        logger.info("Notification status updated successfully for UID: {}", uid);
+        boolean updatedNotificationStatus = notificationService.getNotificationStatus(uid);
 
-        return ResponseEntity.ok(new SuccessResponse("Notification status updated successfully."));
+        logger.info("Notification status updated successfully for UID: {} with new status: {}", uid, updatedNotificationStatus);
+
+        return ResponseEntity.ok(new SuccessResponse(Map.of("notificationEnabled", updatedNotificationStatus)));
     }
+
 
 
     @PutMapping("/{policyIdx}")
