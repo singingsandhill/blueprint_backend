@@ -21,4 +21,5 @@ public class Ssgcode {
 
     @Column(name = "ssg_cd_nm_city")
     private String ssgCdNmCity;
+
 }
