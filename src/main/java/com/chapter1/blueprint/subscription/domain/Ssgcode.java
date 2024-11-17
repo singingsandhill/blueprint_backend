@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter @Setter
 @Table(name = "ssgcode",catalog = "subscription")
 public class Ssgcode {
-    
+
     @Column(name = "ssg_cd_nm")
     private String ssgCdNm;
 
@@ -21,4 +21,5 @@ public class Ssgcode {
 
     @Column(name = "ssg_cd_nm_city")
     private String ssgCdNmCity;
+
 }
