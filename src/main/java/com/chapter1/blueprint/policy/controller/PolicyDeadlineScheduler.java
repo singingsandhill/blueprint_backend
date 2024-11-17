@@ -108,19 +108,40 @@ public class PolicyDeadlineScheduler {
     private void sendNotificationToMemberForPolicy(PolicyList policyList, Long uid) {
         try {
             String policyName = policyList.getName();
-            Date endDate = (Date) policyList.getApplyEndDate();
-            Long idx = policyList.getIdx();
+            Long policyIdx = policyList.getIdx();
 
             Member member = memberRepository.findById(uid)
                     .orElseThrow(() -> new ErrorCodeException(ErrorCode.MEMBER_NOT_FOUND));
 
-            emailService.sendNotificationEmail(member.getEmail(), policyName, endDate, idx);
+            PolicyAlarm policyAlarm = policyAlarmRepository.findByUidAndPolicyIdx(uid, policyIdx);
+            if (policyAlarm == null) {
+                policyAlarm = new PolicyAlarm();
+            } else if (policyAlarm.getSendDate() != null) {
+                logger.info("Email already sent for UID: {}, PolicyIdx: {}", uid, policyIdx);
+                return;
+            }
+
+            emailService.sendNotificationEmail(member.getEmail(), policyName, (Date) policyList.getApplyEndDate(), policyIdx);
             logger.info("Email sent to: {} for policy: {}", member.getEmail(), policyName);
+
+            if (policyAlarm.getIdx() == null) {
+                policyAlarm.setUid(member.getUid());
+                policyAlarm.setPolicyIdx(policyIdx);
+                policyAlarm.setApplyEndDate(policyList.getApplyEndDate());
+            }
+
+            policyAlarm.setSendDate(new java.util.Date());
+            policyAlarmRepository.save(policyAlarm);
+
+            String pushMessage = "마감 3일 전, '" + policyName + "' 이메일 발송되었습니다";
+            sendPushNotification(member.getUid(), pushMessage);
+
+            logger.info("Email sent and push notification created for UID: {}, PolicyIdx: {}", uid, policyIdx);
         } catch (ErrorCodeException e) {
-            logger.error("Error during notification email sending for UID: {}, Policy: {}", uid, policyList.getName(), e);
+            logger.error("Error during notification email sending for UID: {}, PolicyIdx: {}", uid, policyList.getIdx(), e);
             throw e;
         } catch (Exception e) {
-            logger.error("Unexpected error during email sending for UID: {}, Policy: {}", uid, policyList.getName(), e);
+            logger.error("Unexpected error during email sending for UID: {}, PolicyIdx: {}", uid, policyList.getIdx(), e);
             throw new ErrorCodeException(ErrorCode.EMAIL_SENDING_FAILED);
         }
     }
@@ -131,17 +152,44 @@ public class PolicyDeadlineScheduler {
                     .orElseThrow(() -> new ErrorCodeException(ErrorCode.POLICY_NOT_FOUND));
 
             String policyName = policyList.getName();
-            Date endDate = policy.getApplyEndDate();
-            Long idx = policy.getIdx();
+            Long policyIdx = policy.getIdx();
 
-            emailService.sendNotificationEmail(member.getEmail(), policyName, endDate, idx);
+            PolicyAlarm policyAlarm = policyAlarmRepository.findByUidAndPolicyIdx(member.getUid(), policyIdx);
+            if (policyAlarm == null) {
+                policyAlarm = new PolicyAlarm();
+            }
+
+            if (policyAlarm.getSendDate() != null) {
+                logger.info("Recommendation email already sent for UID: {}, PolicyIdx: {}", member.getUid(), policyIdx);
+                return;
+            }
+
+            emailService.sendNotificationEmail(member.getEmail(), policyName, (Date) policyList.getApplyEndDate(), policyIdx);
             logger.info("Recommendation email sent to: {} for policy: {}", member.getEmail(), policyName);
+
+            if (policyAlarm.getIdx() == null) {
+                policyAlarm.setUid(member.getUid());
+                policyAlarm.setPolicyIdx(policyIdx);
+                policyAlarm.setApplyEndDate(policyList.getApplyEndDate());
+            }
+
+            policyAlarm.setSendDate(new java.util.Date());
+            policyAlarmRepository.save(policyAlarm);
+
+            String pushMessage = "마감 3일 전, '" + policyName + "' 이메일 발송되었습니다";
+            sendPushNotification(member.getUid(), pushMessage);
+
+            logger.info("Recommendation email sent and push notification created for UID: {}, PolicyIdx: {}", member.getUid(), policyIdx);
         } catch (ErrorCodeException e) {
-            logger.error("Error during recommendation email sending for Member UID: {}, Policy: {}", member.getUid(), policy.getTarget(), e);
+            logger.error("Error during recommendation email sending for UID: {}, PolicyIdx: {}", member.getUid(), policy.getIdx(), e);
             throw e;
         } catch (Exception e) {
-            logger.error("Unexpected error during recommendation email sending for Member UID: {}, Policy: {}", member.getUid(), policy.getTarget(), e);
+            logger.error("Unexpected error during recommendation email sending for UID: {}, PolicyIdx: {}", member.getUid(), policy.getIdx(), e);
             throw new ErrorCodeException(ErrorCode.EMAIL_SENDING_FAILED);
         }
+    }
+
+    private void sendPushNotification(Long uid, String message) {
+        logger.info("Push notification sent to UID: {} with message: {}", uid, message);
     }
 }

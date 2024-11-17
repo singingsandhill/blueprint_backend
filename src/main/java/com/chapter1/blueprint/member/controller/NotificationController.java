@@ -2,11 +2,16 @@ package com.chapter1.blueprint.member.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 
+import com.chapter1.blueprint.member.domain.PolicyAlarm;
+import com.chapter1.blueprint.member.repository.PolicyAlarmRepository;
 import com.chapter1.blueprint.member.service.MemberService;
 import com.chapter1.blueprint.member.service.NotificationService;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
-import com.chapter1.blueprint.policy.service.PolicyRecommendationService;
+import com.chapter1.blueprint.exception.codes.ErrorCodeException;
+import com.chapter1.blueprint.exception.codes.ErrorCode;
+
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +25,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,7 +38,7 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final MemberService memberService;
     private final PolicyListRepository policyListRepository;
-    private final PolicyRecommendationService policyRecommendationService;
+    private final PolicyAlarmRepository policyAlarmRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
@@ -40,7 +46,7 @@ public class NotificationController {
     public ResponseEntity<SuccessResponse> getNotificationStatus() {
         Long uid = memberService.getAuthenticatedUid();
         logger.info("Fetching notification status for UID: {}", uid);
-        
+
         boolean notificationStatus = notificationService.getNotificationStatus(uid);
 
         logger.info("Notification status fetched successfully for UID: {} with status: {}", uid, notificationStatus);
@@ -217,4 +223,50 @@ public class NotificationController {
 
         return ResponseEntity.ok(new SuccessResponse("Notification marked as read."));
     }
+
+    @GetMapping("/push")
+    public ResponseEntity<SuccessResponse> getPushNotifications() {
+        Long uid = memberService.getAuthenticatedUid();
+        logger.info("Fetching push notifications for UID: {}", uid);
+
+        List<PolicyAlarm> alarms = policyAlarmRepository.findByUid(uid);
+        if (alarms.isEmpty()) {
+            logger.info("No alarms found for UID: {}", uid);
+            return ResponseEntity.ok(new SuccessResponse(Collections.emptyList()));
+        }
+
+        List<Map<String, String>> pushMessages = alarms.stream()
+                .map(alarm -> {
+                    Map<String, String> messageData = new HashMap<>();
+
+                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx())
+                            .orElseThrow(() -> {
+                                logger.error("Policy not found for policyIdx: {}", alarm.getPolicyIdx());
+                                return new ErrorCodeException(ErrorCode.POLICY_NOT_FOUND);
+                            });
+                    
+                    String formattedDate = policy.getApplyEndDate().toInstant()
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate()
+                            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+                    messageData.put("policyName", policy.getName());
+                    messageData.put("applyEndDate", formattedDate);
+
+                    long daysUntilDeadline = ChronoUnit.DAYS.between(
+                            LocalDate.now(),
+                            policy.getApplyEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                    );
+                    if (daysUntilDeadline == 1) {
+                        messageData.put("message", policy.getName() + " 마감 하루 전입니다");
+                    }
+
+                    return messageData;
+                })
+                .filter(messageData -> messageData.containsKey("message"))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new SuccessResponse(pushMessages));
+    }
+
 }
