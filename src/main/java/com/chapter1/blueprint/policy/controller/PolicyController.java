@@ -1,6 +1,7 @@
 package com.chapter1.blueprint.policy.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
+import com.chapter1.blueprint.member.service.MemberService;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.domain.dto.FilterDTO;
 import com.chapter1.blueprint.policy.domain.dto.PolicyDetailDTO;
@@ -10,6 +11,7 @@ import com.chapter1.blueprint.policy.service.PolicyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +49,18 @@ public class PolicyController {
     public ResponseEntity<SuccessResponse> getPolicyListByFiltering(@RequestBody FilterDTO filterDTO) {
         List<PolicyList> policyListByFiltering = policyDetailService.getPolicyListByFiltering(filterDTO);
         return ResponseEntity.ok(new SuccessResponse(policyListByFiltering));
+    }
+
+    @GetMapping("/deadline")
+    public ResponseEntity<SuccessResponse> checkPolicyDeadline() {
+        List<PolicyListDTO> policies = policyService.findPoliciesWithApproachingDeadline();
+        return ResponseEntity.ok(new SuccessResponse(policies));
+    }
+
+    @PostMapping("/manual-check-deadline")
+    public ResponseEntity<String> manualCheckPolicyDeadline() {
+        checkPolicyDeadline();
+        return ResponseEntity.ok("Policy deadline check triggered manually.");
     }
 
     @GetMapping("/recommendation")

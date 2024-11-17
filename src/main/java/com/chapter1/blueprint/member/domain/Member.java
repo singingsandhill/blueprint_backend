@@ -94,4 +94,7 @@ public class Member {
 
     @Column(name = "expiration", nullable = true)
     private Timestamp expiration;
+
+    @Column(name = "notification_status")
+    private Boolean notificationStatus = false;
 }

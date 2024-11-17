@@ -1,5 +1,6 @@
 package com.chapter1.blueprint.policy.repository;
 
+import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +28,9 @@ public interface PolicyListRepository extends JpaRepository<PolicyList,Long> {
             @Param("job") String job,
             @Param("name") String name);
 
+    @Query("SELECT p FROM PolicyList p WHERE DATEDIFF(p.applyEndDate, CURRENT_DATE) = 3")
+    List<PolicyListDTO> findPoliciesWithApproachingDeadline();
+    
     @Query("SELECT p FROM PolicyList p " +
             "JOIN PolicyDetailFilter f ON p.idx = f.idx " +
             "WHERE (:city IS NULL OR p.city = :city) " +

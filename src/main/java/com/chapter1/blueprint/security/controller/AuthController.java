@@ -27,7 +27,7 @@ public class AuthController {
 
         if (jwtProcessor.validateRefreshToken(refreshToken)) {
             Member member = memberRepository.findByMemberId(memberId)
-                    .orElseThrow(() -> new RuntimeException("Invalid User"));
+                    .orElseThrow(() -> new RuntimeException("Invalid Member"));
 
             String newAccessToken = jwtProcessor.generateAccessToken(
                     member.getMemberId(),
