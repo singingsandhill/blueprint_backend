@@ -1,17 +1,18 @@
 package com.chapter1.blueprint.member.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
+@Builder
 @Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
 @Table(name = "policy_alarm", catalog = "member")
 public class PolicyAlarm {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "idx")
     private Long idx;
 
@@ -26,4 +27,13 @@ public class PolicyAlarm {
 
     @Column(name = "send_date")
     private Date sendDate;
+
+    @Column(name = "policy_idx")
+    private Long policyIdx;
+
+    @Column(name = "notification_enabled")
+    private Boolean notificationEnabled = false;
+
+    @Column(name = "apply_end_date")
+    private Date applyEndDate;
 }

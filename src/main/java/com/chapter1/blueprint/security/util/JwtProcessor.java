@@ -85,7 +85,20 @@ public class JwtProcessor {
 
     public Long getUid(String token) {
         String encryptedUid = parseTokenClaims(token).get("uid", String.class);
-        return Long.parseLong(AESUtil.decrypt(encryptedUid, encryptionSecret));
+        if (encryptedUid == null) {
+            log.error("UID not found in token");
+            throw new IllegalArgumentException("UID not found in token");
+        }
+
+        try {
+            log.debug("Encrypted UID: {}", encryptedUid);
+            String decryptedUid = AESUtil.decrypt(encryptedUid, encryptionSecret);
+            log.debug("Decrypted UID: {}", decryptedUid);
+            return Long.parseLong(decryptedUid);
+        } catch (Exception e) {
+            log.error("Failed to decrypt UID from token: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Invalid UID in token", e);
+        }
     }
 
     public String getAuth(String token) {
@@ -127,6 +140,10 @@ public class JwtProcessor {
     public Authentication getAuthentication(String token) {
         String memberId = getSubject(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(memberId);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                userDetails,  // principal
+                token,        // credentials - 여기를 null에서 token으로 변경
+                userDetails.getAuthorities()
+        );
     }
 }

@@ -1,6 +1,7 @@
 package com.chapter1.blueprint.subscription.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
+import com.chapter1.blueprint.member.service.MemberService;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.subscription.domain.SubscriptionList;
 import com.chapter1.blueprint.subscription.domain.DTO.ResidenceDTO;
@@ -24,6 +25,7 @@ import java.util.List;
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
     private final ResidenceService residenceService;
+    private final MemberService memberService;
 
     @GetMapping(value = "/update")
     public ResponseEntity<?> updateSubscription() {
@@ -65,10 +67,9 @@ public class SubscriptionController {
 
     @GetMapping("/recommendation")
     public ResponseEntity<SuccessResponse> recommendSubscription() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedMemberId = authentication.getName();
+        Long uid = memberService.getAuthenticatedUid();
 
-        List<SubscriptionList> recommendedSubscription = subscriptionService.recommendSubscription(authenticatedMemberId);
+        List<SubscriptionList> recommendedSubscription = subscriptionService.recommendSubscription(uid);
         return ResponseEntity.ok(new SuccessResponse(recommendedSubscription));
     }
 

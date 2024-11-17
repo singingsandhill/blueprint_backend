@@ -55,9 +55,9 @@ public class PolicyDetailService {
          return policyListRepository.findByCityDistrictTypeAgeJob(filterDTO.getCity(), filterDTO.getDistrict(), filterDTO.getType(), filterDTO.getAge(), filterDTO.getJob(), filterDTO.getName());
     }
 
-    public List<PolicyList> recommendPolicy(String memberId) {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found with ID (recommendPolicy): " + memberId));;
+    public List<PolicyList> recommendPolicy(Long uid) {
+        Member member = memberRepository.findById(uid)
+                .orElseThrow(() -> new RuntimeException("Member not found with uid (recommendPolicy): " + uid));
 
         int age = memberService.calculateAge(member.getBirthYear());
         return policyListRepository.findByCityDistrictAgeJob(member.getRegion(), member.getDistrict(), age, member.getOccupation());

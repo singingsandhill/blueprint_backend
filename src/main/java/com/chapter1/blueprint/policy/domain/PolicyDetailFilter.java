@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
+
 @Entity
 @Getter @Setter
 @Table(name = "policy_detail_filter", catalog = "policy")
@@ -33,4 +35,7 @@ public class PolicyDetailFilter {
 
     @Column(name = "job")
     private String job;
+
+    @Column(name = "apply_end_date")
+    private Date applyEndDate;
 }
