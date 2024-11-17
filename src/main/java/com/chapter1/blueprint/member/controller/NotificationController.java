@@ -36,6 +36,18 @@ public class NotificationController {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
+    @GetMapping("/status")
+    public ResponseEntity<SuccessResponse> getNotificationStatus() {
+        Long uid = memberService.getAuthenticatedUid();
+        logger.info("Fetching notification status for UID: {}", uid);
+        
+        boolean notificationStatus = notificationService.getNotificationStatus(uid);
+
+        logger.info("Notification status fetched successfully for UID: {} with status: {}", uid, notificationStatus);
+
+        return ResponseEntity.ok(new SuccessResponse(Map.of("notificationEnabled", notificationStatus)));
+    }
+
     @PutMapping("/status")
     public ResponseEntity<SuccessResponse> updateNotificationStatus(@RequestBody Map<String, Object> request) {
         Long uid = memberService.getAuthenticatedUid();
