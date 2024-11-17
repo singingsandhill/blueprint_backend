@@ -11,8 +11,6 @@ import com.chapter1.blueprint.policy.repository.PolicyListRepository;
 import com.chapter1.blueprint.exception.codes.ErrorCodeException;
 import com.chapter1.blueprint.exception.codes.ErrorCode;
 
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +36,7 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final MemberService memberService;
     private final PolicyListRepository policyListRepository;
+
     private final PolicyAlarmRepository policyAlarmRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
@@ -73,10 +72,9 @@ public class NotificationController {
         return ResponseEntity.ok(new SuccessResponse(Map.of("notificationEnabled", updatedNotificationStatus)));
     }
 
-
-
     @PutMapping("/{policyIdx}")
     public ResponseEntity<SuccessResponse> updateNotificationSettings(
+
             @PathVariable Long policyIdx,
             @RequestBody Map<String, Object> request) {
         Long uid = memberService.getAuthenticatedUid();
@@ -89,7 +87,6 @@ public class NotificationController {
 
         return ResponseEntity.ok(new SuccessResponse("Notification settings updated successfully."));
     }
-
 
     @DeleteMapping("/{policyIdx}")
     public ResponseEntity<String> deleteNotificationSettings(@PathVariable Long policyIdx) {
@@ -154,7 +151,7 @@ public class NotificationController {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-
+      
         return ResponseEntity.ok(new SuccessResponse(recommendedNotifications));
     }
 
@@ -268,5 +265,4 @@ public class NotificationController {
 
         return ResponseEntity.ok(new SuccessResponse(pushMessages));
     }
-
 }

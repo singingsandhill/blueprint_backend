@@ -32,8 +32,5 @@ public interface PolicyAlarmRepository extends JpaRepository<PolicyAlarm, Long> 
     @Transactional
     @Query("DELETE FROM PolicyAlarm pa WHERE pa.policyIdx = :policyIdx")
     void deleteByPolicyIdx(@Param("policyIdx") Long policyIdx);
-
-
-
 }
 

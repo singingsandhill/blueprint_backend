@@ -57,7 +57,6 @@ public class MemberService {
             if (token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
-
             return jwtProcessor.getUid(token);
         } catch (Exception e) {
             log.error("Exception in getAuthenticatedUid: ", e);

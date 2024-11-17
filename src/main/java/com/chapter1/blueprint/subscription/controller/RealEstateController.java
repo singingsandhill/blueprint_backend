@@ -2,6 +2,7 @@ package com.chapter1.blueprint.subscription.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.subscription.domain.DTO.RealEstatePriceSummaryDTO;
+import com.chapter1.blueprint.subscription.repository.SsgcodeRepository;
 import com.chapter1.blueprint.subscription.service.RealEstateService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +19,18 @@ import java.util.Map;
 @RequestMapping("/realestate")
 public class RealEstateController {
     private final RealEstateService realEstateService;
+    private final SsgcodeRepository ssgcodeRepository;
 
     @GetMapping(value = "/get")
     public ResponseEntity<?> getRealEstatePrice() {
         String result = realEstateService.getRealEstatePrice();
+        
+        return ResponseEntity.ok(new SuccessResponse(result));
+    }
+
+    @GetMapping(value = "/test")
+    public ResponseEntity<?> test() {
+        String result = String.valueOf(ssgcodeRepository.findAllSsgcodes().size());
         return ResponseEntity.ok(new SuccessResponse(result));
     }
 

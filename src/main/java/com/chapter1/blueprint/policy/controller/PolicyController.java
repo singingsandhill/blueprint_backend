@@ -26,6 +26,7 @@ public class PolicyController {
 
     private final PolicyService policyService;
     private final PolicyDetailService policyDetailService;
+    private final MemberService memberService;
 
     @GetMapping(value = "/update/TK")
     public ResponseEntity<?> updatePolicyTK() {
@@ -65,10 +66,9 @@ public class PolicyController {
 
     @GetMapping("/recommendation")
     public ResponseEntity<SuccessResponse> recommendPolicy() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String authenticatedMemberId = authentication.getName();
+        Long uid = memberService.getAuthenticatedUid();
 
-        List<PolicyList> recommendedPolicy = policyDetailService.recommendPolicy(authenticatedMemberId);
+        List<PolicyList> recommendedPolicy = policyDetailService.recommendPolicy(uid);
         return ResponseEntity.ok(new SuccessResponse(recommendedPolicy));
     }
 }

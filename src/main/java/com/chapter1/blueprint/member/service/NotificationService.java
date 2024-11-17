@@ -10,14 +10,17 @@ import com.chapter1.blueprint.member.repository.PolicyAlarmRepository;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
 import jakarta.persistence.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -128,7 +131,6 @@ public class NotificationService {
             throw new ErrorCodeException(ErrorCode.NOTIFICATION_DELETION_FAILED);
         }
     }
-
 
     public List<PolicyAlarm> getMemberNotifications(Long uid) {
         return policyAlarmRepository.findByUidAndAlarmType(uid, "MEMBER_DEFINED")

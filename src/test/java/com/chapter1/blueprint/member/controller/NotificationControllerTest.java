@@ -54,6 +54,7 @@ class NotificationControllerTest {
 
         ResponseEntity<SuccessResponse> response = notificationController.updateNotificationStatus(request);
 
+
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Notification status updated successfully.", response.getBody());
         verify(notificationService, times(1)).updateNotificationStatus(mockUid, true);
@@ -85,7 +86,7 @@ class NotificationControllerTest {
         Map<String, Object> request = new HashMap<>();
         request.put("notificationEnabled", true);
         request.put("applyEndDate", new Date());
-
+      
         ResponseEntity<SuccessResponse> response = notificationController.updateNotificationSettings(policyIdx, request);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());

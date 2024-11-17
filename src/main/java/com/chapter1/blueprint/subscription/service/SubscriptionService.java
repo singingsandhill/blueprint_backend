@@ -253,9 +253,9 @@ public class SubscriptionService {
         return subscriptionListRepository.findAll();
     }
 
-    public List<SubscriptionList> recommendSubscription(String memberId) {
-        Member member = memberRepository.findByMemberId(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found with ID (recommendSubscription): " + memberId));
+    public List<SubscriptionList> recommendSubscription(Long uid) {
+        Member member = memberRepository.findById(uid)
+                .orElseThrow(() -> new RuntimeException("Member not found with uid (recommendSubscription): " + uid));
 
         return subscriptionListRepository.findByRegionAndCityAndDistrictContaining(member.getRegion(), member.getDistrict(), member.getLocal());
     }
