@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice, Long> {
@@ -38,5 +39,20 @@ public interface RealEstatePriceRepository extends JpaRepository<RealEstatePrice
 
     @Query("SELECT DISTINCT umdNm FROM RealEstatePrice WHERE region = :city AND ssgCdNm = :district ORDER BY umdNm")
     List<String> getLocal(@Param("city") String city, @Param("district") String district);
+
+    @Query("SELECT COUNT(DISTINCT r.ssgCd) FROM RealEstatePrice r")
+    long countDistinctSsgCd();
+
+    @Query("SELECT COUNT(r) FROM RealEstatePrice r WHERE r.ssgCd = :ssgCd")
+    long countBySsgCd(@Param("ssgCd") String ssgCd);
+
+    @Query("SELECT DISTINCT r.ssgCd FROM RealEstatePrice r")
+    List<String> findDistinctSsgCds();
+
+    @Query("SELECT COUNT(DISTINCT r.ssgCd) FROM RealEstatePrice r WHERE r.dealYear = :year AND r.dealMonth = :month")
+    long countBySsgCdAndYearMonth(@Param("year") String year, @Param("month") Integer month);
+
+    @Query("SELECT DISTINCT r.ssgCd FROM RealEstatePrice r WHERE r.dealYear = :year AND r.dealMonth = :month")
+    Set<String> findBySsgCdAndDealYearAndDealMonth(String year, int month);
 
 }

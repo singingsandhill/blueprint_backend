@@ -5,7 +5,6 @@ import lombok.Setter;
 
 @Getter @Setter
 public class SsgcodeDTO {
-    private Integer ssgCd;
 
     private String ssgCdNm;
 
