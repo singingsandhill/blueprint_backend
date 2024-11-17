@@ -1,25 +1,27 @@
 package com.chapter1.blueprint.member.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
-import com.chapter1.blueprint.member.domain.PolicyAlarm;
+
 import com.chapter1.blueprint.member.service.MemberService;
 import com.chapter1.blueprint.member.service.NotificationService;
-import com.chapter1.blueprint.policy.domain.PolicyDetailFilter;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.repository.PolicyListRepository;
 import com.chapter1.blueprint.policy.service.PolicyRecommendationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -35,40 +37,38 @@ public class NotificationController {
     private static final Logger logger = LoggerFactory.getLogger(NotificationController.class);
 
     @PutMapping("/status")
-    public ResponseEntity<String> updateNotificationStatus(@RequestBody Map<String, Object> request) {
-        try {
-            Long uid = memberService.getAuthenticatedUid();
-            log.info("Step 1 - Retrieved UID: {}", uid); // UID 값 확인
+    public ResponseEntity<SuccessResponse> updateNotificationStatus(@RequestBody Map<String, Object> request) {
+        Long uid = memberService.getAuthenticatedUid();
+        logger.info("Retrieved UID: {}", uid);
+        logger.info("Request body: {}", request);
 
-            log.info("Step 2 - Request body: {}", request); // 요청 데이터 확인
-            boolean notificationEnabled = (Boolean) request.get("notificationEnabled");
+        boolean notificationEnabled = (Boolean) request.get("notificationEnabled");
 
-            log.info("Step 3 - About to call notificationService with uid: {} and enabled: {}",
-                    uid, notificationEnabled); // 서비스 호출 직전 확인
+        logger.info("Calling notificationService.updateNotificationStatus with uid: {} and enabled: {}", uid, notificationEnabled);
 
-            notificationService.updateNotificationStatus(uid, notificationEnabled);
+        notificationService.updateNotificationStatus(uid, notificationEnabled);
 
-            log.info("Step 4 - Successfully updated notification status"); // 성공 확인
+        logger.info("Notification status updated successfully for UID: {}", uid);
 
-            return ResponseEntity.ok("Notification status updated successfully.");
-        } catch (Exception e) {
-            log.error("Failed to update notification status", e);
-            throw e;
-        }
+        return ResponseEntity.ok(new SuccessResponse("Notification status updated successfully."));
     }
 
+
     @PutMapping("/{policyIdx}")
-    public ResponseEntity<String> updateNotificationSettings(
+    public ResponseEntity<SuccessResponse> updateNotificationSettings(
             @PathVariable Long policyIdx,
             @RequestBody Map<String, Object> request) {
         Long uid = memberService.getAuthenticatedUid();
         boolean notificationEnabled = (Boolean) request.get("notificationEnabled");
-        Date applyEndDate = (Date) request.get("applyEndDate");
 
-        notificationService.saveOrUpdateNotification(uid, policyIdx, notificationEnabled, applyEndDate);
+        logger.info("Calling notificationService.saveOrUpdateNotification with uid: {}, policyIdx: {}, enabled: {}",
+                uid, policyIdx, notificationEnabled);
 
-        return ResponseEntity.ok("Notification settings updated successfully.");
+        notificationService.saveOrUpdateNotification(uid, policyIdx, notificationEnabled);
+
+        return ResponseEntity.ok(new SuccessResponse("Notification settings updated successfully."));
     }
+
 
     @DeleteMapping("/{policyIdx}")
     public ResponseEntity<String> deleteNotificationSettings(@PathVariable Long policyIdx) {
@@ -78,77 +78,128 @@ public class NotificationController {
     }
 
     @GetMapping("/list/member")
-    public ResponseEntity<?> getMemberDefinedNotifications() {
+    public ResponseEntity<SuccessResponse> getMemberDefinedNotifications() {
         Long uid = memberService.getAuthenticatedUid();
-        List<PolicyAlarm> memberNotifications = notificationService.getMemberNotifications(uid);
+        logger.info("Fetching member-defined notifications for UID: {}", uid);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> memberNotifications = notificationService.getMemberNotifications(uid).stream()
+                .map(alarm -> {
+                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx()).orElse(null);
+                    if (policy != null && policy.getApplyEndDate() != null) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("policyName", policy.getName());
+
+                        LocalDate localDate = policy.getApplyEndDate()
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+
+                        map.put("applyEndDate", localDate.format(formatter));
+                        return map;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(new SuccessResponse(memberNotifications));
     }
 
     @GetMapping("/list/recommended")
-    public ResponseEntity<?> getRecommendedNotifications() {
+    public ResponseEntity<SuccessResponse> getRecommendedNotifications() {
         Long uid = memberService.getAuthenticatedUid();
-        List<PolicyAlarm> recommendedNotifications = notificationService.getRecommendedNotifications(uid);
+        logger.info("Fetching recommended notifications for UID: {}", uid);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        List<Map<String, Object>> recommendedNotifications = notificationService.getRecommendedNotifications(uid).stream()
+                .map(alarm -> {
+                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx()).orElse(null);
+                    if (policy != null && policy.getApplyEndDate() != null) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("policyName", policy.getName());
+
+                        LocalDate localDate = policy.getApplyEndDate()
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate();
+
+                        map.put("applyEndDate", localDate.format(formatter));
+                        return map;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(new SuccessResponse(recommendedNotifications));
     }
 
     @GetMapping("/dashboard")
-    public ResponseEntity<Map<String, Object>> getNotificationDashboard() {
+    public ResponseEntity<SuccessResponse> getNotificationDashboard() {
         Long uid = memberService.getAuthenticatedUid();
+        logger.info("Fetching dashboard data for UID: {}", uid);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // 사용자 설정 알림
-        List<PolicyAlarm> memberNotifications = notificationService.getMemberNotifications(uid);
+        List<Map<String, Object>> memberNotifications = notificationService.getMemberNotifications(uid).stream()
+                .map(alarm -> {
+                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx()).orElse(null);
+                    if (policy != null && policy.getApplyEndDate() != null) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("policyName", policy.getName());
+                        map.put("applyEndDate", policy.getApplyEndDate()
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                                .format(formatter));
+                        map.put("isRead", alarm.getIsRead());
+                        map.put("policyIdx", alarm.getPolicyIdx());
+                        return map;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         // 추천된 정책 알림
-        List<PolicyAlarm> recommendedNotifications = notificationService.getRecommendedNotifications(uid);
-
-        // 추천된 정책 (실시간 추천)
-        List<PolicyDetailFilter> recommendedPolicies = policyRecommendationService.getRecommendedPolicies(uid);
+        List<Map<String, Object>> recommendedNotifications = notificationService.getRecommendedNotifications(uid).stream()
+                .map(alarm -> {
+                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx()).orElse(null);
+                    if (policy != null && policy.getApplyEndDate() != null) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("policyName", policy.getName());
+                        map.put("applyEndDate", policy.getApplyEndDate()
+                                .toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                                .format(formatter));
+                        map.put("isRead", alarm.getIsRead());
+                        map.put("policyIdx", alarm.getPolicyIdx());
+                        return map;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         Map<String, Object> dashboard = new HashMap<>();
-        dashboard.put("memberNotifications", memberNotifications.stream()
-                .map(alarm -> {
-                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx())
-                            .orElse(null);
-                    if (policy != null && policy.getName() != null && policy.getApplyEndDate() != null) {
-                        return Map.of(
-                                "policyName", policy.getName(),
-                                "applyEndDate", policy.getApplyEndDate()
-                        );
-                    }
-                    return null;
-                })
-                .filter(map -> map != null)
-                .toList());
+        dashboard.put("memberNotifications", memberNotifications);
+        dashboard.put("recommendedNotifications", recommendedNotifications);
 
-        dashboard.put("recommendedNotifications", recommendedNotifications.stream()
-                .map(alarm -> {
-                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx())
-                            .orElse(null);
-                    if (policy != null && policy.getName() != null && policy.getApplyEndDate() != null) {
-                        return Map.of(
-                                "policyName", policy.getName(),
-                                "applyEndDate", policy.getApplyEndDate()
-                        );
-                    }
-                    return null;
-                })
-                .filter(map -> map != null)
-                .toList());
-
-        dashboard.put("recommendedPolicies", recommendedPolicies.stream()
-                .map(policy -> {
-                    if (policy.getTarget() != null && policy.getApplyEndDate() != null) {
-                        return Map.of(
-                                "policyName", policy.getTarget(),
-                                "applyEndDate", policy.getApplyEndDate()
-                        );
-                    }
-                    return null;
-                })
-                .filter(map -> map != null)
-                .toList());
-
-        return ResponseEntity.ok(dashboard);
+        return ResponseEntity.ok(new SuccessResponse(dashboard));
     }
 
+    @PutMapping("/read/{policyIdx}")
+    public ResponseEntity<SuccessResponse> markNotificationAsRead(@PathVariable Long policyIdx) {
+        Long uid = memberService.getAuthenticatedUid();
+        logger.info("Marking notification as read for UID: {}, PolicyIdx: {}", uid, policyIdx);
+
+        notificationService.markNotificationAsRead(uid, policyIdx);
+
+        return ResponseEntity.ok(new SuccessResponse("Notification marked as read."));
+    }
 }

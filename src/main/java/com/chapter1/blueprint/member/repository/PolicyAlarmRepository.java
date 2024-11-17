@@ -23,6 +23,8 @@ public interface PolicyAlarmRepository extends JpaRepository<PolicyAlarm, Long> 
 
     List<PolicyAlarm> findByUidAndAlarmType(Long uid, String alarmType);
 
+    List<PolicyAlarm> findAllByNotificationEnabled(Boolean notificationEnabled);
+
     @Query("SELECT p FROM PolicyAlarm p WHERE p.notificationEnabled = true AND p.applyEndDate <= :applyEndDate")
     List<PolicyAlarm> findEnabledNotificationsBeforeDeadline(@Param("applyEndDate") Date applyEndDate);
 
