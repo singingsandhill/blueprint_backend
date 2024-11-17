@@ -293,4 +293,16 @@ public class FinanceService {
     public Page<LoanList> getFilteredLoans(Pageable pageable, String mrtgTypeNm, String lendRateTypeNm) {
         return loanListRepository.findLoansWithFilters(mrtgTypeNm, lendRateTypeNm, pageable);
     }
+
+    public Page<SavingsList> getFilteredSavings(Pageable pageable, String intrRateNm, String prdCategory) {
+        return savingsListRepository.findSavingsWithFilters(intrRateNm, prdCategory, pageable);
+    }
+
+    public List<LoanList> getAllLoans() {
+        return loanListRepository.findAll();
+    }
+
+    public List<SavingsList> getAllSavings() {
+        return savingsListRepository.findAll();
+    }
 }

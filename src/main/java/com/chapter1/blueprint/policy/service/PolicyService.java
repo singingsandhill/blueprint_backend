@@ -39,7 +39,7 @@ public class PolicyService {
 
 
     public String updatePolicyTK() {
-        String requestUrl = policyApiUrlTK + "?apiKey=" + policyApiKeyTK + "&searchYear=" + 2024+"&recordCount="+100;
+        String requestUrl = policyApiUrlTK + "?apiKey=" + policyApiKeyTK + "&searchYear=" + 2024+"&recordCount="+500;
         Integer numOfPolicy = 0;
 
         try {

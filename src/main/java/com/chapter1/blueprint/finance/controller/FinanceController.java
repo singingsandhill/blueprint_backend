@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -106,5 +107,40 @@ public class FinanceController {
                 lendRateTypeNm.isEmpty() ? null : lendRateTypeNm);
 
         return ResponseEntity.ok(new SuccessResponse(result));
+    }
+
+    @Operation(summary = "저축 상품 목록 조회", description = "페이지네이션과 필터를 적용하여 저축 상품 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @GetMapping("/savings")
+    public ResponseEntity<?> getSavings(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false, defaultValue = "") String intrRateNm,
+            @RequestParam(required = false, defaultValue = "") String prdCategory,
+            @RequestParam(required = false, defaultValue = "intrRate") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String direction
+    ) {
+        // Sort 객체 생성
+        Sort sort = Sort.by(Sort.Direction.fromString(direction), sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // 서비스 호출
+        Page<SavingsList> result = financeService.getFilteredSavings(pageable,
+                intrRateNm.isEmpty() ? null : intrRateNm,
+                prdCategory.isEmpty() ? null : prdCategory);
+
+        return ResponseEntity.ok(new SuccessResponse(result));
+    }
+
+    @GetMapping("/getAllLoans")
+    public ResponseEntity<?> getAllLoans() {
+        List<LoanList> loanList = financeService.getAllLoans();
+        return ResponseEntity.ok(new SuccessResponse(loanList));
+    }
+
+    @GetMapping("/getAllSavings")
+    public ResponseEntity<?> getAllSavings() {
+        List<SavingsList> savingsList = financeService.getAllSavings();
+        return ResponseEntity.ok(new SuccessResponse(savingsList));
     }
 }
