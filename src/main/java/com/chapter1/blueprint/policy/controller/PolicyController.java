@@ -34,6 +34,12 @@ public class PolicyController {
         return ResponseEntity.ok(new SuccessResponse(result));
     }
 
+    @GetMapping(value = "/update/company")
+    public ResponseEntity<?> updatePolicyCompany() {
+        String result = policyService.updatePolicyCompany();
+        return ResponseEntity.ok(new SuccessResponse(result));
+    }
+
     @GetMapping("/list")
     public ResponseEntity<SuccessResponse> getPolicyList() {
         List<PolicyListDTO> policyList = policyDetailService.getPolicyList();
