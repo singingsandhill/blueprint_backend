@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface SubscriptionListRepository extends JpaRepository<SubscriptionList, Long> {
 
-    List<SubscriptionList> findByRegionAndCityAndDistrictContaining(String region, String city, String district);
+    List<SubscriptionList> findByRegionAndCityContaining(String region, String city);
 
 }
