@@ -220,10 +220,9 @@ public class NotificationService {
 
     // Push 알림 조회
     @Transactional(readOnly = true)
-    public List<Map<String, String>> getPushNotifications(Long uid) {
+    public List<Map<String, Object>> getPushNotifications(Long uid) {
         log.info("Fetching push notifications for UID: {}", uid);
 
-        // UID로 알림 조회
         List<PolicyAlarm> alarms = policyAlarmRepository.findByUid(uid);
         if (alarms.isEmpty()) {
             log.info("No notifications found for UID: {}", uid);
@@ -232,7 +231,6 @@ public class NotificationService {
 
         log.info("Total alarms fetched: {}", alarms.size());
 
-        // 필터링: ApplyEndDate가 null인 경우 제외하고 날짜 조건 만족 여부 확인
         return alarms.stream()
                 .filter(alarm -> {
                     Date applyEndDate = alarm.getApplyEndDate();
@@ -241,7 +239,6 @@ public class NotificationService {
                         return false;
                     }
 
-                    // 날짜 비교: 3일 전 또는 1일 전 조건 만족
                     boolean isEmailNotification = isThreeDaysBefore(applyEndDate);
                     boolean isDayBeforeNotification = isOneDayBefore(applyEndDate);
 
@@ -257,13 +254,12 @@ public class NotificationService {
                                 throw new ErrorCodeException(ErrorCode.POLICY_NOT_FOUND);
                             });
 
-                    // 알림 메시지 작성
-                    Map<String, String> message = new HashMap<>();
+                    Map<String, Object> message = new HashMap<>();
+                    message.put("policyIdx", alarm.getPolicyIdx());
                     message.put("policyName", policy.getName());
                     message.put("applyEndDate", formatDate(policy.getApplyEndDate()));
-                    message.put("pushDate", formatDate(new Date())); // 현재 날짜를 pushDate로 추가
+                    message.put("pushDate", formatDate(new Date()));
 
-                    // 라벨 추가: 날짜 조건에 따라 "이메일 발송" 또는 "마감 하루 전"
                     if (isOneDayBefore(alarm.getApplyEndDate())) {
                         message.put("message", "마감 하루 전");
                     } else if (isThreeDaysBefore(alarm.getApplyEndDate())) {
