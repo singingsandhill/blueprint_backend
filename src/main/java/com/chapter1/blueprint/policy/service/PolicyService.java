@@ -20,9 +20,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Transactional
@@ -137,10 +137,26 @@ public class PolicyService {
 
         try {
             URL url = new URL(requestUrl);
-            log.error("check url : "+ requestUrl);
+            log.info("API 요청 URL: {}", requestUrl);
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+
+            int responseCode = conn.getResponseCode();
+            log.info("API 응답 코드: {}", responseCode);
+
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                BufferedReader errorReader = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+                StringBuilder errorResponse = new StringBuilder();
+                String line;
+                while ((line = errorReader.readLine()) != null) {
+                    errorResponse.append(line);
+                }
+                errorReader.close();
+                log.error("API 오류 응답: {}", errorResponse.toString());
+                throw new RuntimeException("API 호출 실패. 응답 코드: " + responseCode);
+            }
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
             StringBuilder response = new StringBuilder();
@@ -150,57 +166,72 @@ public class PolicyService {
             }
             reader.close();
 
-            log.error("API Response: {}", response.toString());
+            log.info("API 응답 데이터: {}", response.toString());
 
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode rootNode = objectMapper.readTree(response.toString());
             JsonNode items = rootNode.path("jsonArray");
 
-            SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyyMMdd");
-            SimpleDateFormat dbDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            if (items.isMissingNode() || items.isEmpty()) {
+                log.warn("API 응답에 정책 데이터가 없습니다.");
+                return "API 응답에 정책 데이터가 없습니다.";
+            }
 
             numOfPolicy = items.size();
+            log.info("처리할 정책 수: {}", numOfPolicy);
+
             for (JsonNode item : items) {
-                PolicyList policyList = new PolicyList();
-                policyList.setDistrict(item.path("pblancNm").asText());
-                policyList.setType(item.path("pldirSportRealmLclasCodeNm").asText());
-                //policyList.setName(item.path("policyNm").asText());
-                policyList.setOfferInst(item.path("excInsttNm").asText());
-                policyList.setManageInst(item.path("jrsdInsttNm").asText());
+                try {
+                    PolicyList policyList = new PolicyList();
+                    String policyName = item.path("pblancNm").asText();
 
-                // 날짜정보는 파싱
-                processDateRange(item.path("reqstBeginEndDe").asText(), policyList);
+                    policyList.setName(policyName);
+                    policyList.setCity(extractAndMapCity(policyName));
+                    policyList.setDistrict(extractAndMapCity(policyName));
+                    policyList.setType(item.path("pldirSportRealmLclasCodeNm").asText());
+                    policyList.setOfferInst(item.path("excInsttNm").asText());
+                    policyList.setManageInst(item.path("jrsdInsttNm").asText());
 
-                PolicyDetail policyDetail = new PolicyDetail();
-                policyDetail.setSubject(item.path("trgetNm").asText()); //대상
-                policyDetail.setCondition(item.path("bsnsSumryCn").asText()); //조건
-                policyDetail.setContent(item.path("bsnsSumryCn").asText()); //내용
-                //policyDetail.setScale(item.path("policyScl").asText()); //규모
-                policyDetail.setEnquiry(item.path("refrncNm").asText()); //문의처
-                policyDetail.setWay(item.path("rceptEngnHmpgUrl").asText()); //지원방법
+                    processDateRange(item.path("reqstBeginEndDe").asText(), policyList);
 
-                // 문서 정보 (파일명)
-                String fileNm = item.path("fileNm").asText();
-                if (fileNm != null && !fileNm.isEmpty()) {
-                    policyDetail.setDocument(fileNm);
+                    PolicyDetail policyDetail = new PolicyDetail();
+                    policyDetail.setSubject(item.path("trgetNm").asText());
+                    policyDetail.setCondition(item.path("bsnsSumryCn").asText());
+                    policyDetail.setContent(item.path("bsnsSumryCn").asText());
+                    policyDetail.setEnquiry(item.path("refrncNm").asText());
+                    policyDetail.setWay(item.path("reqstMthPapersCn").asText());
+
+                    String fileNm = item.path("fileNm").asText();
+                    if (!fileNm.equals("null") && !fileNm.isEmpty()) {
+                        policyDetail.setDocument(fileNm);
+                    }
+
+                    String pblancUrl = item.path("pblancUrl").asText();
+                    if (!pblancUrl.equals("null") && !pblancUrl.isEmpty()) {
+                        policyDetail.setUrl(pblancUrl);
+                    }
+
+                    // 각 엔티티 독립적으로 저장
+                    policyListRepository.save(policyList);
+                    policyDetailRepositpry.save(policyDetail);
+
+                    numOfPolicy++;
+
+                } catch (Exception e) {
+                    log.error("정책 데이터 처리 중 오류 발생. 정책명: {}, 오류: {}",
+                            item.path("pblancNm").asText(), e.getMessage());
+                    // 개별 정책 처리 실패 시 다음 정책 처리 계속
+                    continue;
                 }
-
-                // URL 정보
-                String pblancUrl = item.path("pblancUrl").asText();
-                if (pblancUrl != null && !pblancUrl.isEmpty()) {
-                    policyDetail.setUrl(pblancUrl);
-                }
-
-                policyListRepository.save(policyList);  // 데이터 저장
-                policyDetailRepositpry.save(policyDetail);
-                numOfPolicy++;
             }
 
         } catch (Exception e) {
-            log.error("정책 정보 업데이트 중 오류 발생: ", e.getMessage());
-            throw new RuntimeException("정책 정보 업데이트 실패", e);
+            log.error("정책 정보 업데이트 중 오류 발생: ", e);
+            throw new RuntimeException("정책 정보 업데이트 실패: " + e.getMessage());
         }
-        String result = "성공, 불러온 정책 수는 "+numOfPolicy + " 개";
+
+        String result = String.format("성공, 불러온 정책 수는 %d개", numOfPolicy);
+        log.info(result);
         return result;
     }
 
@@ -216,6 +247,8 @@ public class PolicyService {
                 Date startDate = new Date(); // 현재 날짜를 시작일로 설정
                 policyList.setApplyStartDate(startDate);
                 policyList.setApplyEndDate(endDate);
+                policyList.setStartDate(startDate);
+                policyList.setEndDate(endDate);
                 return;
             }
 
@@ -228,6 +261,8 @@ public class PolicyService {
                 SimpleDateFormat apiDateFormat = new SimpleDateFormat("yyyyMMdd");
                 policyList.setApplyStartDate(apiDateFormat.parse(startDateStr));
                 policyList.setApplyEndDate(apiDateFormat.parse(endDateStr));
+                policyList.setStartDate(apiDateFormat.parse(startDateStr));
+                policyList.setEndDate(apiDateFormat.parse(endDateStr));
             }
         } catch (ParseException e) {
             log.error("날짜 파싱 중 오류 발생: {}", dateRange, e);
@@ -249,5 +284,35 @@ public class PolicyService {
         policyList.setEndDate(createDateForYear(2099, 12, 31));
     }
 
+    /**
+     * 정책명에서 지역 정보를 추출하고 매핑된 도시명을 반환
+     */
+    private String extractAndMapCity(String policyName) {
+        try {
+            // 정책명에서 [] 안의 내용 추출
+            Pattern pattern = Pattern.compile("\\[(.*?)\\]");
+            Matcher matcher = pattern.matcher(policyName);
 
+            if (matcher.find()) {
+                String cityCode = matcher.group(1);
+                // 매핑된 도시명 반환, 매핑이 없는 경우 원본 값 사용
+                return CITY_MAPPING.getOrDefault(cityCode, cityCode);
+            }
+        } catch (Exception e) {
+            log.error("지역 정보 추출 중 오류 발생: {}", policyName, e);
+        }
+
+        // [] 안에 지역 정보가 없는 경우 "전국" 반환
+        return "전국";
+    }
+
+    // 지역 매핑을 위한 Map 선언
+    private static final Map<String, String> CITY_MAPPING = new HashMap<>() {{
+        put("경기", "경기도");
+        put("서울", "서울특별시");
+        put("세종", "세종특별자치시");
+        put("전북", "전북특별자치도");
+        put("울산", "울산광역시");
+        put("전남", "전라남도");
+    }};
 }
