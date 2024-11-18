@@ -109,6 +109,21 @@ public class NotificationService {
         }
     }
 
+    public void restoreAllNotifications(Long uid) {
+        List<PolicyAlarm> alarms = policyAlarmRepository.findByUid(uid);
+        alarms.forEach(alarm -> alarm.setNotificationEnabled(true));
+        policyAlarmRepository.saveAll(alarms);
+        logger.info("All notifications restored for UID: {}", uid);
+    }
+
+    public void disableAllNotifications(Long uid) {
+        List<PolicyAlarm> alarms = policyAlarmRepository.findByUid(uid);
+        alarms.forEach(alarm -> alarm.setNotificationEnabled(false));
+        policyAlarmRepository.saveAll(alarms);
+        logger.info("All notifications disabled for UID: {}", uid);
+    }
+
+
     // 알림 저장 또는 업데이트
     @Transactional
     public void saveOrUpdateNotification(Long uid, Long policyIdx, boolean notificationEnabled) {
@@ -125,7 +140,7 @@ public class NotificationService {
                         .policyIdx(policyIdx)
                         .notificationEnabled(notificationEnabled)
                         .alarmType(PolicyAlarmType.MEMBER_DEFINED.getType())
-                        .applyEndDate(policy.getApplyEndDate()) // applyEndDate가 null일 경우 처리
+                        .applyEndDate(policy.getApplyEndDate())
                         .isRead(false)
                         .build();
                 policyAlarmRepository.save(newAlarm);
@@ -133,7 +148,7 @@ public class NotificationService {
                 logger.info("Updating MEMBER_DEFINED PolicyAlarm for UID: {}, PolicyIdx: {}", uid, policyIdx);
                 existingAlarm.setNotificationEnabled(notificationEnabled);
                 existingAlarm.setAlarmType(PolicyAlarmType.MEMBER_DEFINED.getType());
-                existingAlarm.setApplyEndDate(policy.getApplyEndDate()); // applyEndDate가 null일 경우 처리
+                existingAlarm.setApplyEndDate(policy.getApplyEndDate());
                 if (!notificationEnabled) {
                     existingAlarm.setIsRead(false);
                 }
