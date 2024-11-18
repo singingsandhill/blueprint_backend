@@ -69,7 +69,7 @@ public class NotificationController {
         boolean updatedNotificationStatus = notificationService.getNotificationStatus(uid);
 
         logger.info("Notification status updated successfully for UID: {} with new status: {}", uid, updatedNotificationStatus);
-        
+
         return ResponseEntity.ok(new SuccessResponse(Map.of("notificationEnabled", updatedNotificationStatus)));
     }
 
