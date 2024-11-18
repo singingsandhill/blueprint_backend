@@ -19,7 +19,8 @@ public interface PolicyListRepository extends JpaRepository<PolicyList,Long> {
             "AND (:type IS NULL OR p.type = :type) " +
             "AND (:age IS NULL OR (f.minAge <= :age AND f.maxAge >= :age)) " +
             "AND (:job IS NULL OR f.job = :job)" +
-            "AND (:name IS NULL OR p.name LIKE %:name%)" )
+            "AND (:name IS NULL OR p.name LIKE %:name%)" +
+            "ORDER BY p.applyEndDate DESC")
     List<PolicyList> findByCityDistrictTypeAgeJob(
             @Param("city") String city,
             @Param("district") String district,
@@ -30,13 +31,14 @@ public interface PolicyListRepository extends JpaRepository<PolicyList,Long> {
 
     @Query("SELECT p FROM PolicyList p WHERE DATEDIFF(p.applyEndDate, CURRENT_DATE) = 3")
     List<PolicyListDTO> findPoliciesWithApproachingDeadline();
-    
+
     @Query("SELECT p FROM PolicyList p " +
             "JOIN PolicyDetailFilter f ON p.idx = f.idx " +
             "WHERE (:city IS NULL OR p.city = :city) " +
             "AND (:district IS NULL OR p.district = :district OR p.district LIKE CONCAT('%', :district, '%')) " +
             "AND (:age IS NULL OR ((f.minAge <= :age AND f.maxAge >= :age) OR (f.minAge = 0 AND f.maxAge = 0))) " +
-            "AND (:job IS NULL OR f.job = :job OR f.job = '전체')")
+            "AND (:job IS NULL OR f.job = :job OR f.job = '전체') " +
+            "AND (p.applyEndDate >= CURRENT_DATE)")
     List<PolicyList> findByCityDistrictAgeJob(
             @Param("city") String city,
             @Param("district") String district,

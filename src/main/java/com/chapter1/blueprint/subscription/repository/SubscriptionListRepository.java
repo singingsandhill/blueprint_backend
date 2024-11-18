@@ -12,6 +12,10 @@ import java.util.List;
 @Repository
 public interface SubscriptionListRepository extends JpaRepository<SubscriptionList, Long> {
 
+    @Query("SELECT s FROM SubscriptionList s " +
+            "WHERE s.region = :region " +
+            "AND s.city LIKE %:city% " +
+            "AND s.rceptEndde >= CURRENT_DATE")
     List<SubscriptionList> findByRegionAndCityContaining(String region, String city);
 
 }
