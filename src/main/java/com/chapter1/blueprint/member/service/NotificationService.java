@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -327,10 +328,17 @@ public class NotificationService {
         Member member = memberRepository.findById(alarm.getUid())
                 .orElseThrow(() -> new ErrorCodeException(ErrorCode.MEMBER_NOT_FOUND));
 
+        java.sql.Timestamp applyEndDateTimestamp = (Timestamp) policy.getApplyEndDate();
+        java.sql.Date applyEndDate = null;
+
+        if (applyEndDateTimestamp != null) {
+            applyEndDate = new java.sql.Date(applyEndDateTimestamp.getTime());
+        }
+
         emailService.sendNotificationEmail(
                 member.getEmail(),
                 policy.getName(),
-                (java.sql.Date) policy.getApplyEndDate(),
+                applyEndDate,
                 policy.getIdx()
         );
 
@@ -356,14 +364,19 @@ public class NotificationService {
     }
 
     private boolean isThreeDaysBefore(Date date) {
+        if (date == null) {
+            return false;
+        }
         long daysDiff = ChronoUnit.DAYS.between(LocalDate.now(), date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        log.debug("Checking 3 days before: Today: {}, TargetDate: {}, Difference: {}", LocalDate.now(), date, daysDiff);
         return daysDiff == 3;
     }
 
     private boolean isOneDayBefore(Date date) {
+        if (date == null) {
+            return false;
+        }
         long daysDiff = ChronoUnit.DAYS.between(LocalDate.now(), date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        log.debug("Checking 1 day before: Today: {}, TargetDate: {}, Difference: {}", LocalDate.now(), date, daysDiff);
         return daysDiff == 1;
     }
+
 }
