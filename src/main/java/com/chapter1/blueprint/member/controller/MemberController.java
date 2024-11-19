@@ -5,7 +5,7 @@ import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
 import com.chapter1.blueprint.member.domain.dto.FindPasswordDTO;
 import com.chapter1.blueprint.member.domain.dto.PasswordDTO;
 import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
-import com.chapter1.blueprint.member.dto.MemberDTO;
+import com.chapter1.blueprint.member.domain.dto.MemberDTO;
 import com.chapter1.blueprint.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-
 import java.util.Map;
 
 @Slf4j
@@ -27,6 +26,7 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+
     private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 
     @PostMapping("/register")
@@ -98,7 +98,6 @@ public class MemberController {
         memberService.updatePassword(authenticatedMemberId, passwordDTO);
         return ResponseEntity.ok(new SuccessResponse("비밀번호 변경 성공"));
     }
-
 
     //@GetMapping(value = "/members/new")
     //public String createForm() {

@@ -1,4 +1,4 @@
-package com.chapter1.blueprint.member.dto;
+package com.chapter1.blueprint.member.domain.dto;
 
 import lombok.Data;
 

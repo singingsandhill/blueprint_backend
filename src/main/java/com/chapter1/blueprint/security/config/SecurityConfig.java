@@ -62,13 +62,25 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers("/member/login", "/member/register").permitAll()
-                        .requestMatchers("/member/checkMemberId/**", "/member/checkEmail/**").permitAll()
-                        .requestMatchers("/member/find/memberId", "/member/find/password").permitAll()
-                        .requestMatchers("/member/email/sendVerification", "/member/email/verifyEmailCode").permitAll()
+                        .requestMatchers(
+                                "/member/login",
+                                "/member/register",
+                                "/member/checkMemberId/**",
+                                "/member/checkEmail/**",
+                                "/member/find/memberId",
+                                "/member/find/password",
+                                "/member/email/sendVerification",
+                                "/member/email/verifyEmailCode"
+                        ).permitAll()
                         .requestMatchers("/member/**").authenticated()
-                        .requestMatchers("/policy/list/**", "/policy/detail/**", "policy/filter").permitAll()
-                        .requestMatchers("/subscription/city", "/subscription/district", "/subscription/local").permitAll()
+                        .requestMatchers("/finance/filter/**").authenticated()
+                        .requestMatchers("/policy/recommendation").authenticated()
+                        .requestMatchers("/policy/list/**", "/policy/detail/**", "/policy/filter", "/policy/update/TK","/policy/update/company").permitAll()
+                        .requestMatchers("/finance/**", "/finance/filter/**").permitAll()
+
+                        .requestMatchers("/subscription/recommendation").authenticated()
+                        .requestMatchers("/subscription/city", "/subscription/district", "/subscription/local", "/subscription/update").permitAll()
+                        .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**","/swagger-resources/**","/webjars/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception
@@ -76,8 +88,8 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler)
                 )
                 .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, JwtUsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

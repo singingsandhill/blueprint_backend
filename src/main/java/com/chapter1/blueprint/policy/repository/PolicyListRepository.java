@@ -1,5 +1,6 @@
 package com.chapter1.blueprint.policy.repository;
 
+import com.chapter1.blueprint.policy.domain.dto.PolicyListDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import org.springframework.data.jpa.repository.Query;
@@ -12,9 +13,35 @@ import java.util.List;
 public interface PolicyListRepository extends JpaRepository<PolicyList,Long> {
 
     @Query("SELECT p FROM PolicyList p " +
-            "WHERE (:district IS NULL OR p.district = :district) " +
+            "JOIN PolicyDetailFilter f ON p.idx = f.idx " +
+            "WHERE (:city IS NULL OR p.city = :city) " +
+            "AND (:district IS NULL OR p.district = :district) " +
             "AND (:type IS NULL OR p.type = :type) " +
-            "AND (:city IS NULL OR p.city = :city)")
-    List<PolicyList> findByDistrictAndType(@Param("city") String city, @Param("district") String district, @Param("type") String type);
+            "AND (:age IS NULL OR (f.minAge <= :age AND f.maxAge >= :age)) " +
+            "AND (:job IS NULL OR f.job = :job)" +
+            "AND (:name IS NULL OR p.name LIKE %:name%)" +
+            "ORDER BY p.applyEndDate DESC")
+    List<PolicyList> findByCityDistrictTypeAgeJob(
+            @Param("city") String city,
+            @Param("district") String district,
+            @Param("type") String type,
+            @Param("age") Integer age,
+            @Param("job") String job,
+            @Param("name") String name);
 
+    @Query("SELECT p FROM PolicyList p WHERE DATEDIFF(p.applyEndDate, CURRENT_DATE) = 3")
+    List<PolicyListDTO> findPoliciesWithApproachingDeadline();
+
+    @Query("SELECT p FROM PolicyList p " +
+            "JOIN PolicyDetailFilter f ON p.idx = f.idx " +
+            "WHERE (:city IS NULL OR p.city = :city) " +
+            "AND (:district IS NULL OR p.district = :district OR p.district LIKE CONCAT('%', :district, '%')) " +
+            "AND (:age IS NULL OR ((f.minAge <= :age AND f.maxAge >= :age) OR (f.minAge = 0 AND f.maxAge = 0))) " +
+            "AND (:job IS NULL OR f.job = :job OR f.job = '전체') " +
+            "AND (p.applyEndDate >= CURRENT_DATE)")
+    List<PolicyList> findByCityDistrictAgeJob(
+            @Param("city") String city,
+            @Param("district") String district,
+            @Param("age") Integer age,
+            @Param("job") String job);
 }

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -277,5 +280,29 @@ public class FinanceService {
             log.error("Error updating deposit data", e);
             return "API 데이터 처리 중 오류 발생: " + e.getMessage();
         }
+    }
+
+    public SavingsList getSavingsFilter() {
+        return savingsListRepository.getSavingsFilter();
+    }
+
+    public LoanList getLoanFilter() {
+        return loanListRepository.getLoanFilter();
+    }
+
+    public Page<LoanList> getFilteredLoans(Pageable pageable, String mrtgTypeNm, String lendRateTypeNm) {
+        return loanListRepository.findLoansWithFilters(mrtgTypeNm, lendRateTypeNm, pageable);
+    }
+
+    public Page<SavingsList> getFilteredSavings(Pageable pageable, String intrRateNm, String prdCategory) {
+        return savingsListRepository.findSavingsWithFilters(intrRateNm, prdCategory, pageable);
+    }
+
+    public List<LoanList> getAllLoans() {
+        return loanListRepository.findAll();
+    }
+
+    public List<SavingsList> getAllSavings() {
+        return savingsListRepository.findAll();
     }
 }

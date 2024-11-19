@@ -1,5 +1,8 @@
 package com.chapter1.blueprint.policy.service;
 
+import com.chapter1.blueprint.member.domain.Member;
+import com.chapter1.blueprint.member.repository.MemberRepository;
+import com.chapter1.blueprint.member.service.MemberService;
 import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.domain.dto.FilterDTO;
@@ -21,6 +24,8 @@ import java.util.stream.Collectors;
 public class PolicyDetailService {
     private final PolicyDetailRepository policyDetailRepository;
     private final PolicyListRepository policyListRepository;
+    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     public List<PolicyListDTO> getPolicyList() {
         List<PolicyList> policyList = policyListRepository.findAll();
@@ -43,24 +48,18 @@ public class PolicyDetailService {
     }
 
     public PolicyDetailDTO getPolicyDetail(Long idx) {
-        PolicyDetail policyDetail = policyDetailRepository.findById(idx)
-                .orElseThrow(() -> new IllegalArgumentException("해당 idx의 PolicyDetail을 찾을 수 없습니다."));
-
-        PolicyDetailDTO policyDetailDTO = new PolicyDetailDTO();
-        policyDetailDTO.setIdx(policyDetail.getIdx());
-        policyDetailDTO.setSubject(policyDetail.getSubject());
-        policyDetailDTO.setCondition(policyDetail.getCondition());
-        policyDetailDTO.setContent(policyDetail.getContent());
-        policyDetailDTO.setScale(policyDetail.getScale());
-        policyDetailDTO.setEnquiry(policyDetail.getEnquiry());
-        policyDetailDTO.setDocument(policyDetail.getDocument());
-        policyDetailDTO.setUrl(policyDetail.getUrl());
-        policyDetailDTO.setWay(policyDetail.getWay());
-
-        return policyDetailDTO;
+        return policyDetailRepository.findPolicyDetailByIdx(idx);
     }
 
     public List<PolicyList> getPolicyListByFiltering(FilterDTO filterDTO) {
-         return policyListRepository.findByDistrictAndType(filterDTO.getCity(), filterDTO.getDistrict(), filterDTO.getType());
+         return policyListRepository.findByCityDistrictTypeAgeJob(filterDTO.getCity(), filterDTO.getDistrict(), filterDTO.getType(), filterDTO.getAge(), filterDTO.getJob(), filterDTO.getName());
+    }
+
+    public List<PolicyList> recommendPolicy(Long uid) {
+        Member member = memberRepository.findById(uid)
+                .orElseThrow(() -> new RuntimeException("Member not found with uid (recommendPolicy): " + uid));
+
+        int age = memberService.calculateAge(member.getBirthYear());
+        return policyListRepository.findByCityDistrictAgeJob(member.getRegion(), member.getDistrict(), age, member.getOccupation());
     }
 }

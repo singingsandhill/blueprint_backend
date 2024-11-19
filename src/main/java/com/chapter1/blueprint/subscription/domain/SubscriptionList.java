@@ -33,6 +33,9 @@ public class SubscriptionList {
     @Column(name = "house_manage_no")
     private Integer houseManageNo;
 
+    @Column(name="house_dtl_secd_nm")
+    private String houseDtlSecdNm;
+
     @Column(name = "rent_secd")
     private String rentSecd;
 
@@ -47,5 +50,4 @@ public class SubscriptionList {
 
     @Column(name = "pblanc_url")
     private String pblancUrl;
-
 }

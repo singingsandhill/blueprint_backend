@@ -1,10 +1,8 @@
 package com.chapter1.blueprint.member.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
-import com.chapter1.blueprint.member.dto.EmailDTO;
-import com.chapter1.blueprint.member.dto.MemberDTO;
+import com.chapter1.blueprint.member.domain.dto.EmailDTO;
 import com.chapter1.blueprint.member.service.EmailService;
-import com.chapter1.blueprint.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
