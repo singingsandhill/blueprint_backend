@@ -1,6 +1,5 @@
-package com.chapter1.blueprint.member.dto;
+package com.chapter1.blueprint.member.domain.dto;
 
-import com.chapter1.blueprint.member.domain.Member;
 import lombok.*;
 
 @Data

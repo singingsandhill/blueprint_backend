@@ -73,6 +73,7 @@ public class NotificationController {
         return ResponseEntity.ok(new SuccessResponse(Map.of("notificationEnabled", updatedNotificationStatus)));
     }
 
+
     @PutMapping("/{policyIdx}")
     public ResponseEntity<SuccessResponse> updateNotificationSettings(
 
@@ -115,6 +116,10 @@ public class NotificationController {
                                 .toLocalDate()
                                 .format(formatter)
                                 : "상시");
+
+                        map.put("policyIdx", alarm.getPolicyIdx());
+                        map.put("notification_enabled", alarm.getNotificationEnabled());
+
                         return map;
                     }
                     return null;
@@ -134,9 +139,9 @@ public class NotificationController {
 
         List<Map<String, Object>> recommendedNotifications = notificationService.getRecommendedNotifications(uid).stream()
                 .map(alarm -> {
-                    Map<String, Object> map = new HashMap<>();
                     PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx()).orElse(null);
                     if (policy != null) {
+                        Map<String, Object> map = new HashMap<>();
                         map.put("policyName", policy.getName());
                         map.put("applyEndDate", alarm.getApplyEndDate() != null
                                 ? alarm.getApplyEndDate().toInstant()
@@ -144,6 +149,10 @@ public class NotificationController {
                                 .toLocalDate()
                                 .format(formatter)
                                 : "상시");
+
+                        map.put("policyIdx", alarm.getPolicyIdx());
+                        map.put("notification_enabled", alarm.getNotificationEnabled());
+
                         return map;
                     }
                     return null;
@@ -163,11 +172,53 @@ public class NotificationController {
 
         // 사용자 설정 알림
         List<PolicyAlarm> memberNotifications = notificationService.getMemberNotifications(uid);
-        List<Map<String, Object>> formattedMemberNotifications = notificationService.formatNotifications(memberNotifications, formatter);
+        List<Map<String, Object>> formattedMemberNotifications = memberNotifications.stream()
+                .map(alarm -> {
+                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx()).orElse(null);
+                    if (policy != null) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("policyName", policy.getName());
+                        map.put("applyEndDate", alarm.getApplyEndDate() != null
+                                ? alarm.getApplyEndDate().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                                .format(formatter)
+                                : "상시");
+
+                        map.put("policyIdx", alarm.getPolicyIdx());
+                        map.put("notification_enabled", alarm.getNotificationEnabled());
+
+                        return map;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         // 추천된 정책 알림
         List<PolicyAlarm> recommendedNotifications = notificationService.getRecommendedNotifications(uid);
-        List<Map<String, Object>> formattedRecommendedNotifications = notificationService.formatNotifications(recommendedNotifications, formatter);
+        List<Map<String, Object>> formattedRecommendedNotifications = recommendedNotifications.stream()
+                .map(alarm -> {
+                    PolicyList policy = policyListRepository.findById(alarm.getPolicyIdx()).orElse(null);
+                    if (policy != null) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("policyName", policy.getName());
+                        map.put("applyEndDate", alarm.getApplyEndDate() != null
+                                ? alarm.getApplyEndDate().toInstant()
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                                .format(formatter)
+                                : "상시");
+
+                        map.put("policyIdx", alarm.getPolicyIdx());
+                        map.put("notification_enabled", alarm.getNotificationEnabled());
+
+                        return map;
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         Map<String, Object> dashboard = new HashMap<>();
         dashboard.put("memberNotifications", formattedMemberNotifications);

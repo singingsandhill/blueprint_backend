@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -53,24 +54,26 @@ public class NotificationService {
         return member.getNotificationStatus();
     }
 
-    // 알림 상태 업데이트
     @Transactional
     public void updateNotificationStatus(Long uid, boolean enabled) {
-        logger.info("Updating notification status for UID: {}", uid);
+        logger.info("Updating notification status for UID: {}, Enabled: {}", uid, enabled);
 
         try {
-            // Member 엔티티 업데이트
+            // Member 테이블의 알림 상태 업데이트
             Member member = memberRepository.findById(uid)
                     .orElseThrow(() -> new ErrorCodeException(ErrorCode.MEMBER_NOT_FOUND));
             member.setNotificationStatus(enabled);
             memberRepository.save(member);
             logger.info("Updated Member.notificationStatus for UID: {}", uid);
 
-            // 추천 정책에 대한 PolicyAlarm 업데이트
-            List<PolicyList> recommendedPolicies = policyDetailService.recommendPolicy(uid);
-
             if (enabled) {
+                // 알림 활성화: 모든 알림을 다시 활성화
+                logger.info("Enabling all notifications for UID: {}", uid);
+                restoreAllNotifications(uid);
+
+                List<PolicyList> recommendedPolicies = policyDetailService.recommendPolicy(uid);
                 logger.info("Enabling notifications for {} recommended policies for UID: {}", recommendedPolicies.size(), uid);
+
                 for (PolicyList policy : recommendedPolicies) {
                     PolicyAlarm alarm = policyAlarmRepository.findByUidAndPolicyIdx(uid, policy.getIdx());
                     if (alarm == null) {
@@ -90,12 +93,8 @@ public class NotificationService {
                     }
                 }
             } else {
-                logger.info("Disabling notifications for all recommended policies for UID: {}", uid);
-                List<PolicyAlarm> alarms = policyAlarmRepository.findByUidAndAlarmType(uid, PolicyAlarmType.RECOMMENDED.getType());
-                for (PolicyAlarm alarm : alarms) {
-                    alarm.setNotificationEnabled(false);
-                    policyAlarmRepository.save(alarm);
-                }
+                logger.info("Disabling all notifications for UID: {}", uid);
+                disableAllNotifications(uid);
             }
 
             logger.info("Notification status updated successfully for UID: {}", uid);
@@ -107,6 +106,28 @@ public class NotificationService {
             logger.error("Unexpected error while updating notification status for UID: {}", uid, e);
             throw new ErrorCodeException(ErrorCode.NOTIFICATION_UPDATE_FAILED);
         }
+    }
+
+    public void restoreAllNotifications(Long uid) {
+        List<PolicyAlarm> alarms = policyAlarmRepository.findByUid(uid);
+        if (alarms.isEmpty()) {
+            logger.info("No notifications found for UID: {}", uid);
+            return;
+        }
+        alarms.forEach(alarm -> alarm.setNotificationEnabled(true));
+        policyAlarmRepository.saveAll(alarms);
+        logger.info("All notifications restored for UID: {}", uid);
+    }
+
+    public void disableAllNotifications(Long uid) {
+        List<PolicyAlarm> alarms = policyAlarmRepository.findByUid(uid);
+        if (alarms.isEmpty()) {
+            logger.info("No notifications found for UID: {}", uid);
+            return;
+        }
+        alarms.forEach(alarm -> alarm.setNotificationEnabled(false));
+        policyAlarmRepository.saveAll(alarms);
+        logger.info("All notifications disabled for UID: {}", uid);
     }
 
     // 알림 저장 또는 업데이트
@@ -125,7 +146,7 @@ public class NotificationService {
                         .policyIdx(policyIdx)
                         .notificationEnabled(notificationEnabled)
                         .alarmType(PolicyAlarmType.MEMBER_DEFINED.getType())
-                        .applyEndDate(policy.getApplyEndDate()) // applyEndDate가 null일 경우 처리
+                        .applyEndDate(policy.getApplyEndDate())
                         .isRead(false)
                         .build();
                 policyAlarmRepository.save(newAlarm);
@@ -133,12 +154,18 @@ public class NotificationService {
                 logger.info("Updating MEMBER_DEFINED PolicyAlarm for UID: {}, PolicyIdx: {}", uid, policyIdx);
                 existingAlarm.setNotificationEnabled(notificationEnabled);
                 existingAlarm.setAlarmType(PolicyAlarmType.MEMBER_DEFINED.getType());
-                existingAlarm.setApplyEndDate(policy.getApplyEndDate()); // applyEndDate가 null일 경우 처리
+                existingAlarm.setApplyEndDate(policy.getApplyEndDate());
+
                 if (!notificationEnabled) {
                     existingAlarm.setIsRead(false);
                 }
+
                 policyAlarmRepository.save(existingAlarm);
             }
+
+        } catch (ErrorCodeException e) {
+            logger.error("Error while saving or updating MEMBER_DEFINED notification for UID: {}, PolicyIdx: {}", uid, policyIdx, e);
+            throw e;
         } catch (Exception e) {
             logger.error("Unexpected error while saving or updating MEMBER_DEFINED notification for UID: {}, PolicyIdx: {}", uid, policyIdx, e);
             throw new ErrorCodeException(ErrorCode.NOTIFICATION_UPDATE_FAILED);
@@ -301,10 +328,17 @@ public class NotificationService {
         Member member = memberRepository.findById(alarm.getUid())
                 .orElseThrow(() -> new ErrorCodeException(ErrorCode.MEMBER_NOT_FOUND));
 
+        java.sql.Timestamp applyEndDateTimestamp = (Timestamp) policy.getApplyEndDate();
+        java.sql.Date applyEndDate = null;
+
+        if (applyEndDateTimestamp != null) {
+            applyEndDate = new java.sql.Date(applyEndDateTimestamp.getTime());
+        }
+
         emailService.sendNotificationEmail(
                 member.getEmail(),
                 policy.getName(),
-                (java.sql.Date) policy.getApplyEndDate(),
+                applyEndDate,
                 policy.getIdx()
         );
 
@@ -330,14 +364,19 @@ public class NotificationService {
     }
 
     private boolean isThreeDaysBefore(Date date) {
+        if (date == null) {
+            return false;
+        }
         long daysDiff = ChronoUnit.DAYS.between(LocalDate.now(), date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        log.debug("Checking 3 days before: Today: {}, TargetDate: {}, Difference: {}", LocalDate.now(), date, daysDiff);
         return daysDiff == 3;
     }
 
     private boolean isOneDayBefore(Date date) {
+        if (date == null) {
+            return false;
+        }
         long daysDiff = ChronoUnit.DAYS.between(LocalDate.now(), date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
-        log.debug("Checking 1 day before: Today: {}, TargetDate: {}, Difference: {}", LocalDate.now(), date, daysDiff);
         return daysDiff == 1;
     }
+
 }

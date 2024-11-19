@@ -3,11 +3,10 @@ package com.chapter1.blueprint.member.service;
 import com.chapter1.blueprint.exception.codes.ErrorCode;
 import com.chapter1.blueprint.exception.codes.ErrorCodeException;
 import com.chapter1.blueprint.member.domain.Member;
-import com.chapter1.blueprint.member.domain.PolicyAlarm;
 import com.chapter1.blueprint.member.domain.dto.InputProfileDTO;
 import com.chapter1.blueprint.member.domain.dto.PasswordDTO;
 import com.chapter1.blueprint.member.domain.dto.ProfileInfoDTO;
-import com.chapter1.blueprint.member.dto.MemberDTO;
+import com.chapter1.blueprint.member.domain.dto.MemberDTO;
 import com.chapter1.blueprint.member.repository.MemberRepository;
 
 import com.chapter1.blueprint.security.util.JwtProcessor;
