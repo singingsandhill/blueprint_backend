@@ -71,3 +71,13 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// jar 파일 비활성화
+jar {
+    enabled = false
+}
+
+// boot jar 파일 이름 설정
+bootJar {
+    archiveFileName = 'blueprint-server.jar'
+}
