@@ -44,55 +44,87 @@ public class SecurityConfig {
     private final MemberRepository memberRepository;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        AuthenticationManager authenticationManager = authenticationManager(authenticationConfiguration);
+public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    AuthenticationManager authenticationManager = authenticationManager(authenticationConfiguration);
+    
+    // JWT 인증 필터 설정
+    JwtUsernamePasswordAuthenticationFilter jwtAuthFilter = createJwtAuthenticationFilter(authenticationManager);
+    
+    return http
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                    .requestMatchers(getPublicEndpoints()).permitAll()
+                    .requestMatchers(getAuthenticatedEndpoints()).authenticated()
+                    .requestMatchers(getSwaggerEndpoints()).permitAll()
+                    .anyRequest().permitAll()
+            )
+            .exceptionHandling(exception -> exception
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                    .accessDeniedHandler(accessDeniedHandler)
+            )
+            .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterAt(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
+}
 
-        JwtUsernamePasswordAuthenticationFilter jwtUsernamePasswordAuthenticationFilter =
-                new JwtUsernamePasswordAuthenticationFilter(
-                        authenticationManager,
-                        loginSuccessHandler,
-                        loginFailureHandler,
-                        memberRepository,
-                        objectMapper
-                );
+private String[] getPublicEndpoints() {
+    return new String[] {
+            "/member/login",
+            "/member/register",
+            "/member/checkMemberId/**",
+            "/member/checkEmail/**",
+            "/member/find/memberId",
+            "/member/find/password",
+            "/member/email/sendVerification",
+            "/member/email/verifyEmailCode",
+            "/policy/list/**",
+            "/policy/detail/**",
+            "/policy/filter",
+            "/policy/update/TK",
+            "/policy/update/company",
+            "/finance/**",
+            "/finance/filter/**",
+            "/finance/healthcheck",
+            "/subscription/city",
+            "/subscription/district",
+            "/subscription/local",
+            "/subscription/update"
+    };
+}
 
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                        .requestMatchers(
-                                "/member/login",
-                                "/member/register",
-                                "/member/checkMemberId/**",
-                                "/member/checkEmail/**",
-                                "/member/find/memberId",
-                                "/member/find/password",
-                                "/member/email/sendVerification",
-                                "/member/email/verifyEmailCode"
-                        ).permitAll()
-                        .requestMatchers("/member/**").authenticated()
-                        .requestMatchers("/finance/filter/**").authenticated()
-                        .requestMatchers("/policy/recommendation").authenticated()
-                        .requestMatchers("/policy/list/**", "/policy/detail/**", "/policy/filter", "/policy/update/TK","/policy/update/company").permitAll()
-                        .requestMatchers("/finance/**", "/finance/filter/**").permitAll()
+private String[] getAuthenticatedEndpoints() {
+    return new String[] {
+            "/member/**",
+            "/finance/filter/**",
+            "/policy/recommendation",
+            "/subscription/recommendation"
+    };
+}
 
-                        .requestMatchers("/subscription/recommendation").authenticated()
-                        .requestMatchers("/subscription/city", "/subscription/district", "/subscription/local", "/subscription/update").permitAll()
-                        .requestMatchers("/swagger-ui.html","/swagger-ui/**","/v3/api-docs/**","/swagger-resources/**","/webjars/**").permitAll()
-                        .anyRequest().permitAll()
-                )
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(authenticationEntryPoint)
-                        .accessDeniedHandler(accessDeniedHandler)
-                )
-                .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAt(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+private String[] getSwaggerEndpoints() {
+    return new String[] {
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/swagger-resources/**",
+            "/webjars/**"
+    };
+}
 
-        return http.build();
-    }
+private JwtUsernamePasswordAuthenticationFilter createJwtAuthenticationFilter(
+        AuthenticationManager authenticationManager) {
+    return new JwtUsernamePasswordAuthenticationFilter(
+            authenticationManager,
+            loginSuccessHandler,
+            loginFailureHandler,
+            memberRepository,
+            objectMapper
+    );
+}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
