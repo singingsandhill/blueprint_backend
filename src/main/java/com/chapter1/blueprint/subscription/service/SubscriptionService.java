@@ -257,6 +257,6 @@ public class SubscriptionService {
         Member member = memberRepository.findById(uid)
                 .orElseThrow(() -> new RuntimeException("Member not found with uid (recommendSubscription): " + uid));
 
-        return subscriptionListRepository.findByRegionAndCityAndDistrictContaining(member.getRegion(), member.getDistrict(), member.getLocal());
+        return subscriptionListRepository.findByRegionAndCityContaining(member.getRegion(), member.getDistrict());
     }
 }
