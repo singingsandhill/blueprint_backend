@@ -2,6 +2,7 @@ package com.chapter1.blueprint.policy.controller;
 
 import com.chapter1.blueprint.exception.dto.SuccessResponse;
 import com.chapter1.blueprint.member.service.MemberService;
+import com.chapter1.blueprint.policy.domain.PolicyDetail;
 import com.chapter1.blueprint.policy.domain.PolicyList;
 import com.chapter1.blueprint.policy.domain.dto.FilterDTO;
 import com.chapter1.blueprint.policy.domain.dto.PolicyDetailDTO;
@@ -46,10 +47,16 @@ public class PolicyController {
         return ResponseEntity.ok(new SuccessResponse(policyList));
     }
 
+//    @GetMapping("/detail/{idx}")
+//    public ResponseEntity<SuccessResponse> getPolicyDetail(@PathVariable Long idx) {
+//        PolicyDetailDTO policyDetailDTO = policyDetailService.getPolicyDetail(idx);
+//        return ResponseEntity.ok(new SuccessResponse(policyDetailDTO));
+//    }
+
     @GetMapping("/detail/{idx}")
     public ResponseEntity<SuccessResponse> getPolicyDetail(@PathVariable Long idx) {
-        PolicyDetailDTO policyDetailDTO = policyDetailService.getPolicyDetail(idx);
-        return ResponseEntity.ok(new SuccessResponse(policyDetailDTO));
+        PolicyDetail policyDetail = policyDetailService.getPolicyDetail(idx);
+        return ResponseEntity.ok(new SuccessResponse(policyDetail));
     }
 
     @PostMapping("/filter")
@@ -76,5 +83,13 @@ public class PolicyController {
 
         List<PolicyList> recommendedPolicy = policyDetailService.recommendPolicy(uid);
         return ResponseEntity.ok(new SuccessResponse(recommendedPolicy));
+    }
+
+    @GetMapping("/peer")
+    public ResponseEntity<SuccessResponse> getPeerPolicy() {
+        Long uid = memberService.getAuthenticatedUid();
+
+        List<PolicyList> peerPolicy = policyDetailService.getPeerPolicy(uid);
+        return ResponseEntity.ok(new SuccessResponse(peerPolicy));
     }
 }

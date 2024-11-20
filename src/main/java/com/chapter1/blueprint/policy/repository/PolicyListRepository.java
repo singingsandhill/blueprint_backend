@@ -44,4 +44,37 @@ public interface PolicyListRepository extends JpaRepository<PolicyList,Long> {
             @Param("district") String district,
             @Param("age") Integer age,
             @Param("job") String job);
+
+    @Query(value = """
+    SELECT pl.* 
+    FROM policy.policy_list pl
+    JOIN (
+        SELECT pa.policy_idx
+        FROM member.policy_alarm pa
+        JOIN member.member_info mi
+            ON pa.uid = mi.uid
+        WHERE mi.uid != :uid
+          AND mi.birth_year BETWEEN (
+              SELECT birth_year 
+              FROM member.member_info 
+              WHERE uid = :uid
+          ) - 5
+          AND (
+              SELECT birth_year 
+              FROM member.member_info 
+              WHERE uid = :uid
+          ) + 5
+          AND mi.region = (
+              SELECT region 
+              FROM member.member_info 
+              WHERE uid = :uid
+          )
+        GROUP BY pa.policy_idx
+        ORDER BY COUNT(pa.policy_idx) DESC
+        LIMIT 3
+    ) top_policies
+    ON pl.idx = top_policies.policy_idx
+    """, nativeQuery = true)
+    List<PolicyList> PeerPolicy(@Param("uid") Long uid);
+
 }
