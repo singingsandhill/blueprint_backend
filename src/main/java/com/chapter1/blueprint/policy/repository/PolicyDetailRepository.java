@@ -10,11 +10,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PolicyDetailRepository extends JpaRepository<PolicyDetail, Long> {
 
-    @Query("SELECT new com.chapter1.blueprint.policy.domain.dto.PolicyDetailDTO(" +
-            "d.idx, d.subject, d.condition, d.content, d.scale, d.enquiry, d.document, d.url, d.way, " +
-            "f.minAge, f.maxAge, f.job) " +
-            "FROM PolicyDetail d JOIN PolicyDetailFilter f ON d.idx = f.idx " +
-            "WHERE d.idx = :idx")
-    PolicyDetailDTO findPolicyDetailByIdx(@Param("idx") Long idx);
+//    @Query("SELECT new com.chapter1.blueprint.policy.domain.dto.PolicyDetailDTO(" +
+//            "d.idx, d.subject, d.condition, d.content, d.scale, d.enquiry, d.document, d.url, d.way, " +
+//            "f.minAge, f.maxAge, f.job) " +
+//            "FROM PolicyDetail d JOIN PolicyDetailFilter f ON d.idx = f.idx " +
+//            "WHERE d.idx = :idx")
+//    PolicyDetailDTO findPolicyDetailByIdx(@Param("idx") Long idx);
+
+//    PolicyDetail findById(long id);
 
 }

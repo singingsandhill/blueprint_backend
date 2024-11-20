@@ -47,8 +47,12 @@ public class PolicyDetailService {
         }).collect(Collectors.toList());
     }
 
-    public PolicyDetailDTO getPolicyDetail(Long idx) {
-        return policyDetailRepository.findPolicyDetailByIdx(idx);
+//    public PolicyDetailDTO getPolicyDetail(Long idx) {
+//        return policyDetailRepository.findPolicyDetailByIdx(idx);
+//    }
+
+    public PolicyDetail getPolicyDetail(Long idx) {
+        return policyDetailRepository.findById(idx).orElse(null);
     }
 
     public List<PolicyList> getPolicyListByFiltering(FilterDTO filterDTO) {
@@ -61,5 +65,9 @@ public class PolicyDetailService {
 
         int age = memberService.calculateAge(member.getBirthYear());
         return policyListRepository.findByCityDistrictAgeJob(member.getRegion(), member.getDistrict(), age, member.getOccupation());
+    }
+
+    public List<PolicyList> getPeerPolicy(Long uid) {
+        return policyListRepository.PeerPolicy(uid);
     }
 }

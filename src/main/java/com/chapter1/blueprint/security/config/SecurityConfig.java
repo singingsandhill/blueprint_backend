@@ -74,7 +74,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/member/**").authenticated()
                         .requestMatchers("/finance/filter/**").authenticated()
-                        .requestMatchers("/policy/recommendation").authenticated()
+                        .requestMatchers("/policy/recommendation", "/policy/peer").authenticated()
                         .requestMatchers("/policy/list/**", "/policy/detail/**", "/policy/filter", "/policy/update/TK","/policy/update/company").permitAll()
                         .requestMatchers("/finance/**", "/finance/filter/**").permitAll()
 
