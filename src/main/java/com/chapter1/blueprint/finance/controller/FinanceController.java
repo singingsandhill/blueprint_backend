@@ -143,4 +143,9 @@ public class FinanceController {
         List<SavingsList> savingsList = financeService.getAllSavings();
         return ResponseEntity.ok(new SuccessResponse(savingsList));
     }
+
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
+	    return "OK";
+}
 }
